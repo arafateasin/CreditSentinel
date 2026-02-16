@@ -1,0 +1,384 @@
+A. New End‑to‑End UI/UX Design (Agentic Credit Sentinel)
+1. Product concept
+Name: Credit Sentinel – AI Credit Officer Agent
+
+Mission: Let an AI “agent” do the repetitive CTOS reading, field extraction, rule checking, and decision prep, while humans only review and approve.
+
+2. Navigation & Layout
+Global layout
+
+Top bar:
+
+Left: Chin Hin logo + “Credit Sentinel”
+
+Center: current page title
+
+Right: user avatar + name + role (Officer / Head / Viewer), dropdown with Logout
+
+Left sidebar:
+
+Dashboard
+
+Applications Queue
+
+New Application
+
+Agent Tasks (optional, read‑only view)
+
+Decision History
+
+Reports
+
+Settings (placeholder)
+
+Visual style
+
+Primary blue: #1E3A8A
+
+Background: #F9FAFB
+
+Card background: #FFFFFF
+
+Borders: #E5E7EB
+
+Risk color badges:
+
+Low: green #10B981
+
+Medium: amber #F59E0B
+
+High: red #EF4444
+
+Font: Inter / system‑ui
+
+Buttons: 6px radius, 40px height, primary blue for main actions.
+
+3. Screen specs
+3.1 Dashboard (/)
+Purpose: Show how well the agent is handling the pipeline.
+
+Sections:
+
+KPI row (4 cards)
+
+Applications in last 7 days
+
+Avg time per application (Upload → Decision)
+
+Percentage handled end‑to‑end by agent without major edits
+
+% of decisions matching agent recommendation (no override)
+
+Charts
+
+Bar chart: Applications by Risk Category.
+
+Line chart: Average turnaround time per day.
+
+Agent activity panel
+
+Cards like “Agent currently working on 3 new CTOS reports”.
+
+List of latest “Agent Tasks” (e.g., “Scoring Avantro Residences – Completed”).
+
+To‑do table (for officer)
+
+“Applications waiting for your review”.
+
+Columns: Customer, Requested Limit, Risk, Agent Status (Extracted / Scored), Age, Action.
+
+3.2 Applications Queue (/applications)
+Purpose: Worklist for officers; each row represents an agent‑prepared case.
+
+Controls:
+
+Filters: Status, Risk, Agent stage (Extracting / Scored / Awaiting Decision), Date range.
+
+Search: company name / registration number.
+
+Table columns:
+
+Customer
+
+Requested Limit
+
+Risk Category badge (if scored)
+
+Agent Stage: New / Extracting / Assessment Ready / Error
+
+Officer Status: Not Reviewed / In Review / Completed
+
+Age (days)
+
+Action: “Open Case”
+
+3.3 New Application – Start Agent (/applications/new)
+Step indicator:
+1. Upload & Start Agent → 2. Agent Assessment → 3. Human Decision
+
+Layout:
+
+Left: CTOS PDF upload card:
+
+Drag & drop area + “Browse” button.
+
+Show file info once selected.
+
+Right: minimal meta form:
+
+Customer Name (required)
+
+Requested Limit (RM, required)
+
+Sales PIC (select)
+
+Notes (optional)
+
+Primary button text:
+“Start Credit Sentinel Agent →”
+
+Flow:
+
+On click, show “Agent started: parsing CTOS and building assessment (≈30–60s).”
+
+After simulated wait, redirect to Agent Assessment screen with mock data.
+
+3.4 Agent Assessment Overview (/applications/:id/assessment)
+Purpose: Show that the agent has already done multiple steps before officer touches the case.
+
+Header:
+
+Title: “Agent Assessment – [Customer Name]”
+
+Subtext: “Agent completed: Extraction ✓ · Scoring ✓ · Consistency checks ✓”
+
+Layout: two columns.
+
+Left column: Agent Summary Card
+
+Risk category badge + score (e.g., “Score 78 / 100 – Category 2 Moderate”).
+
+Agent draft decision: “Suggest APPROVE up to RM X”.
+
+Quick bullets:
+
+“Agent extracted 26 / 26 mandatory fields.”
+
+“3 risk warnings detected.”
+
+“No missing CTOS pages.”
+
+Buttons:
+
+“Review details →” (goes to Extraction Review).
+
+“Go straight to Decision →” (skips into Decision screen for confident users).
+
+Right column: Agent Flags Card
+
+List of agent‑detected issues:
+
+⚠ “Gearing ratio above sector median.”
+
+⚠ “Large facility with Bank ABC recently restructured.”
+
+✓ “No active litigation.”
+
+Each flag is clickable to jump to relevant section in the detail screens.
+
+3.5 Extraction Review (/applications/:id/extraction)
+(Use same structure as before but emphasize agent.)
+
+Add a small banner at top:
+
+“Fields below were auto‑extracted by Credit Sentinel Agent. Only fix what looks wrong.”
+
+Everything else same as previous spec: three columns (PDF, field groups, summary). When officer confirms extraction, agent automatically re‑runs scoring in the background and updates assessment.
+
+3.6 Score & Explanation (/applications/:id/score)
+Extend previous score screen with more obvious “agent reasoning”.
+
+New section at the top:
+
+“Agent Thought Process” timeline:
+
+“Step 1: Parsed CTOS and extracted fields (Paid‑up capital, directors, facilities…).”
+
+“Step 2: Checked mandatory policy rules (minimum capital, litigation, gearing).”
+
+“Step 3: Simulated credit limit up to RM X and evaluated risk.”
+
+“Step 4: Generated recommendation and rationale.”
+
+Then:
+
+Score summary card (risk, score, suggestion).
+
+Strengths / Weaknesses list.
+
+Policy rules table.
+
+3.7 Final Decision (/applications/:id/decision)
+Add clear agent vs officer comparison:
+
+Small panel at top:
+
+“Agent suggests: APPROVE up to RM 500,000.”
+
+“Your decision: [Approve / Reject / Review] (choose below).”
+
+If officer chooses a different decision or limit:
+
+Show a red “Override” pill.
+
+Require justification text.
+
+3.8 Agent Tasks (/agent-tasks) – optional but nice
+Simple page listing agent jobs:
+
+“Extract CTOS for [Customer] – Completed / In progress / Failed.”
+
+“Score [Customer] – Completed.”
+
+Helps you demonstrate agent orchestration visually even if backend is mocked.
+
+3.9 Decision History and Reports
+Use the same design as before but add:
+
+Filter “Show overrides only”.
+
+Metric: “% of cases where officers followed agent recommendation”.
+
+B. Prompt to Give Replit
+Paste this into Replit’s AI (or as a task spec):
+
+You are helping me build the frontend UI for an internal web app called “Credit Sentinel”, for Chin Hin AI Hackathon 2026 Business Challenge 3 (Autonomous Credit Scoring Engine).
+
+I need a React + TypeScript + Tailwind CSS SPA that implements the following screens and flows. Backend APIs will come later, so you can mock data and API calls. Focus on components, routing, and UX.
+
+Global Layout
+Use an AppShell with:
+
+Top bar: Chin Hin logo + “Credit Sentinel”, current page title, user avatar/role.
+
+Left sidebar navigation with items: Dashboard, Applications Queue, New Application, Agent Tasks, Decision History, Reports, Settings (Settings can just be a placeholder).
+
+Content area: centered, max width 1440px, page background #F9FAFB, cards #FFFFFF.
+
+Use Inter font and a primary blue #1E3A8A.
+
+Core React Routes & Pages
+1. / – Dashboard
+
+KPI cards (4):
+
+Applications (last 7 days)
+
+Avg turnaround time
+
+% of applications fully pre‑processed by the agent
+
+% of decisions that matched the agent’s recommendation
+
+Charts:
+
+Bar chart – Applications by Risk Category (Low/Medium/High).
+
+Line chart – Average turnaround vs date.
+
+Table “Applications awaiting your review” with columns: Customer, Requested Limit, Risk, Status, Age, Action (Open).
+
+2. /applications – Applications Queue
+
+Filters: Status, Risk, Agent Stage, date range, search box (customer/reg no).
+
+Table columns: Customer, Requested Limit, Risk Category badge, Agent Stage (New/Extracting/Assessment Ready/Error), Officer Status (Not Reviewed/In Review/Completed), Age, Action (Open).
+
+3. /applications/new – Start Agent (New Application)
+
+Step indicator: “1. Upload & Start Agent → 2. Agent Assessment → 3. Human Decision”.
+
+Left: drag‑and‑drop CTOS PDF upload card (mock the PDF; no real viewer required).
+
+Right: form fields: Customer Name (required), Requested Limit (RM, required), Sales PIC (select with few dummy names), Notes (textarea).
+
+Primary button: “Start Credit Sentinel Agent →”.
+
+On click: simulate a short delay (e.g., setTimeout) then navigate to /applications/:id/assessment using a fake applicationId and mocked data.
+
+4. /applications/:id/assessment – Agent Assessment Overview
+
+Show that the agent already did work:
+
+Card summarising: Risk category badge, numeric score, “Agent suggests: APPROVE/REJECT/REVIEW up to RM X”.
+
+Text like “Agent completed: Extraction ✓ · Scoring ✓ · Consistency checks ✓”.
+
+Second card listing agent‑detected flags (e.g., “High gearing ratio”, “No litigation found”) with icons.
+
+Buttons: “Review extracted fields → (/extraction) and “Go straight to decision → (/decision)”.
+
+5. /applications/:id/extraction – Review Extraction
+
+Banner: “Fields below were auto‑extracted by Credit Sentinel Agent. Only fix what looks wrong.”
+
+Three columns layout:
+
+Left: CTOS preview placeholder (e.g., gray card with “CTOS PDF preview here”).
+
+Center: grouped fields (Company Profile, Directors & Ownership, Financial Strength, Banking Facilities, Risk Indicators). Each field row has: label, value, confidence chip (High/Medium/Low), Edit icon and “View in CTOS” link. Editing changes the value and shows an “Edited” tag.
+
+Right: summary card with mandatory fields completed, list of fields needing attention, and a primary button “Ask Agent to Score →” that navigates to /applications/:id/score.
+
+6. /applications/:id/score – Score & Explanation
+
+Show a “Agent Thought Process” timeline (4 steps: extracted → checked rules → simulated limit → built recommendation).
+
+Summary card with risk category badge, numeric score, and “Agent suggests: APPROVE/REJECT/REVIEW up to RM X”.
+
+Left column: list of Strengths and Weaknesses bullets.
+
+Right column: table of policy rules applied (Rule name, Condition, Result, Impact).
+
+Buttons: “Back to Extraction” and “Proceed to Final Decision → (/decision)”.
+
+7. /applications/:id/decision – Final Decision
+
+Small panel at top:
+
+“Agent suggests: [decision + limit]”.
+
+Three decision cards: Approve (with Approved Limit input), Reject (with reason dropdown), Review/On Hold (with follow‑up date).
+
+Textarea for “Internal remarks / justification”. If the selected decision or limit differs from the agent suggestion, show an “Override” badge and make justification required.
+
+Buttons: “Back to Score” and “Confirm & Log Decision”. On confirm, show toast and navigate back to /applications.
+
+8. /agent-tasks – Agent Tasks (optional but nice)
+
+Simple table of tasks like “Extract CTOS for [Customer] – In Progress/Completed/Error” to visually represent the agent orchestration.
+
+9. /history – Decision History
+
+Filters: date range, decision type, risk category, officer, “overrides only” toggle.
+
+Table: Customer, Final Decision, Risk Category, Agent vs Officer (match/override icon), Approved Limit, Officer, Date, Action (View).
+
+Row click → right‑side drawer with tabs “Fields”, “Score”, and “Timeline” showing mocked details.
+
+10. /reports – Reports
+
+Pie chart: decisions (Approve/Reject/Review) in last 30 days.
+
+Bar chart: average turnaround per officer.
+
+Simple table: “Top 10 largest approvals”.
+
+Components & Styling
+Build reusable components: Button, Card, Badge, KpiCard, DataTable, FormField, StepIndicator, Toast, Drawer, Tabs.
+
+Use Tailwind CSS with a consistent spacing scale (8/12/16/24px) and the provided color palette.
+
+Use mock JSON objects to drive the UI and simulate loading states with skeletons.
+
+The goal is a clean, production‑looking UI that clearly shows the “agentic” flow: the agent does extraction and scoring first, then the human officer reviews and decides

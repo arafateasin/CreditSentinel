@@ -10,6 +10,8 @@ import NewApplication from "@/pages/new-application";
 import ReviewExtraction from "@/pages/review-extraction";
 import ScoreRecommendation from "@/pages/score-recommendation";
 import DecisionApproval from "@/pages/decision-approval";
+import AgentAssessment from "@/pages/agent-assessment";
+import AgentTasks from "@/pages/agent-tasks";
 import HistoryPage from "@/pages/history";
 import ReportsPage from "@/pages/reports";
 
@@ -19,12 +21,13 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/applications" component={ApplicationsQueue} />
       <Route path="/applications/new" component={NewApplication} />
+      <Route path="/applications/:id/assessment" component={AgentAssessment} />
       <Route path="/applications/:id/extraction" component={ReviewExtraction} />
       <Route path="/applications/:id/score" component={ScoreRecommendation} />
       <Route path="/applications/:id/decision" component={DecisionApproval} />
+      <Route path="/agent-tasks" component={AgentTasks} />
       <Route path="/history" component={HistoryPage} />
       <Route path="/reports" component={ReportsPage} />
-      {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
   );
