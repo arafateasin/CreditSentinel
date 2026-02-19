@@ -1,25 +1,15 @@
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Cell
-} from "recharts";
-import { 
-  ArrowUpRight, 
-  Users, 
-  Clock, 
-  CheckCircle2, 
-  Zap,
-  Bot
+  Zap, 
+  Target, 
+  ArrowRight,
+  Bot,
+  Clock,
+  History
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import {
   Table,
   TableBody,
@@ -29,214 +19,112 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Link } from "wouter";
-
-const kpiData = [
-  {
-    title: "Applications (7d)",
-    value: "42",
-    label: "Total last 7 days",
-    icon: Users,
-    trend: "+12%",
-    trendUp: true,
-  },
-  {
-    title: "Avg Turnaround",
-    value: "1.8h",
-    label: "Upload → Decision",
-    icon: Clock,
-    trend: "-24%",
-    trendUp: true,
-  },
-  {
-    title: "Agent Efficiency",
-    value: "94%",
-    label: "No major edits",
-    icon: Zap,
-    trend: "+2%",
-    trendUp: true,
-  },
-  {
-    title: "Decision Match",
-    value: "88%",
-    label: "No overrides",
-    icon: Bot,
-    trend: "+5%",
-    trendUp: true,
-  },
-];
-
-const riskData = [
-  { name: "Low Risk", value: 45, color: "hsl(var(--chart-2))" },
-  { name: "Moderate", value: 30, color: "hsl(var(--chart-3))" },
-  { name: "High Risk", value: 15, color: "hsl(var(--chart-4))" },
-];
-
-const timeData = [
-  { day: "Mon", hours: 2.2 },
-  { day: "Tue", hours: 1.8 },
-  { day: "Wed", hours: 2.1 },
-  { day: "Thu", hours: 1.6 },
-  { day: "Fri", hours: 1.5 },
-  { day: "Sat", hours: 1.2 },
-  { day: "Sun", hours: 1.1 },
-];
-
-const applications = [
-  {
-    id: "APP-001",
-    customer: "Mega Build Construction Sdn Bhd",
-    limit: 500000,
-    risk: "Low",
-    status: "Scored",
-    age: "2h",
-  },
-  {
-    id: "APP-002",
-    customer: "TechStream Solutions",
-    limit: 150000,
-    risk: "Moderate",
-    status: "Extracted",
-    age: "4h",
-  },
-  {
-    id: "APP-003",
-    customer: "Global Logistics Partners",
-    limit: 1000000,
-    risk: "High",
-    status: "Scored",
-    age: "1d",
-  },
-];
 
 export default function Dashboard() {
+  const kpis = [
+    { title: "New Applications", value: "12", sub: "Today", icon: Zap },
+    { title: "Avg Turnaround", value: "28 min", sub: "vs 3 days manual", icon: Clock },
+    { title: "Accuracy", value: "94%", sub: "Agent match rate", icon: Target },
+  ];
+
+  const recentActivity = [
+    { customer: "ABC Trading Sdn Bhd", status: "Scored", score: "78", decision: "Pending" },
+    { customer: "Mega Build Construction", status: "Completed", score: "92", decision: "Approved" },
+    { customer: "TechStream Solutions", status: "Review", score: "65", decision: "KIV" },
+    { customer: "Global Logistics", status: "Scored", score: "42", decision: "Rejected" },
+    { customer: "Sunrise Properties", status: "Extracting", score: "-", decision: "-" },
+  ];
+
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Agent Performance Overview</h1>
-            <p className="text-muted-foreground">Tracking how Credit Sentinel Agent handles the pipeline.</p>
+      <div className="max-w-4xl mx-auto space-y-12 py-8">
+        {/* Hero Section */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+            <Bot className="w-4 h-4" />
+            Your AI Credit Officer Agent
           </div>
-          <div className="flex items-center gap-2">
-             <Link href="/applications/new">
-                <Button>+ New Application</Button>
-             </Link>
-          </div>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
+            Welcome to Credit Sentinel
+          </h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+            Agent processes CTOS reports in 3 simple steps: 
+            <span className="text-emerald-600 font-bold ml-1">Extract</span> → 
+            <span className="text-amber-600 font-bold">Score</span> → 
+            <span className="text-primary font-bold">Recommend</span>
+          </p>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpiData.map((kpi, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between space-y-0 pb-2">
-                  <p className="text-sm font-medium text-muted-foreground">{kpi.title}</p>
-                  <kpi.icon className="h-4 w-4 text-primary" />
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {kpis.map((kpi, i) => (
+            <Card key={i} className="border-none shadow-xl shadow-slate-200/50">
+              <CardContent className="p-8 text-center space-y-2">
+                <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                  <kpi.icon className="w-6 h-6 text-primary" />
                 </div>
-                <div className="flex items-end justify-between mt-2">
-                  <div>
-                    <div className="text-2xl font-bold">{kpi.value}</div>
-                    <p className="text-xs text-muted-foreground mt-1">{kpi.label}</p>
-                  </div>
-                  <div className="text-emerald-600 text-xs font-medium flex items-center">
-                    {kpi.trend} <ArrowUpRight className="h-3 w-3 ml-1" />
-                  </div>
-                </div>
+                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">{kpi.title}</h3>
+                <p className="text-3xl font-black text-slate-900">{kpi.value}</p>
+                <p className="text-xs text-slate-400 font-bold">{kpi.sub}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Applications by Risk Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={riskData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <Tooltip />
-                    <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={50}>
-                      {riskData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Avg Turnaround per Day</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={timeData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="hours" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Action Buttons */}
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/applications/new">
+            <Button size="lg" className="h-14 px-8 font-black text-base shadow-xl shadow-primary/20">
+              Start New Application <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
+          <Link href="/applications">
+            <Button variant="outline" size="lg" className="h-14 px-8 font-black text-base border-slate-200">
+              View Queue
+            </Button>
+          </Link>
+          <Link href="/history">
+            <Button variant="ghost" size="lg" className="h-14 px-8 font-black text-base text-slate-500">
+              Recent Decisions
+            </Button>
+          </Link>
         </div>
 
-        {/* Applications Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Applications Waiting for Your Review</CardTitle>
+        {/* Recent Activity */}
+        <Card className="border-none shadow-xl shadow-slate-200/50">
+          <CardHeader className="border-b border-slate-50">
+            <CardTitle className="text-lg font-black flex items-center gap-2">
+              <History className="w-5 h-5 text-primary" />
+              Recent Activity
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Requested Limit</TableHead>
-                  <TableHead>Risk</TableHead>
-                  <TableHead>Agent Status</TableHead>
-                  <TableHead>Age</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="font-bold text-slate-900">Customer</TableHead>
+                  <TableHead className="font-bold text-slate-900">Status</TableHead>
+                  <TableHead className="font-bold text-slate-900">Agent Score</TableHead>
+                  <TableHead className="font-bold text-slate-900 text-right">Officer Decision</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {applications.map((app) => (
-                  <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.customer}</TableCell>
-                    <TableCell>RM {app.limit.toLocaleString()}</TableCell>
+                {recentActivity.map((row, i) => (
+                  <TableRow key={i} className="hover:bg-slate-50 transition-colors">
+                    <TableCell className="font-bold text-slate-700">{row.customer}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={cn(
-                        app.risk === "Low" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                      )}>{app.risk}</Badge>
+                      <Badge variant="secondary" className="font-bold text-[10px] uppercase">{row.status}</Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{app.status}</Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{app.age}</TableCell>
+                    <TableCell className="font-black text-primary">{row.score}</TableCell>
                     <TableCell className="text-right">
-                      <Link href={`/applications/${app.id}/assessment`}>
-                        <Button size="sm" variant="ghost">Review Case</Button>
-                      </Link>
+                      <Badge variant="outline" className={cn(
+                        "font-bold text-[10px] uppercase",
+                        row.decision === "Approved" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                        row.decision === "Rejected" ? "bg-rose-50 text-rose-700 border-rose-100" : "bg-slate-100 text-slate-500"
+                      )}>
+                        {row.decision}
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}

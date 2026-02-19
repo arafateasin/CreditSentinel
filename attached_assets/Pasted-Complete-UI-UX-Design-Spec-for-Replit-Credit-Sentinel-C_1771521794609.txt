@@ -1,0 +1,262 @@
+Complete UI/UX Design Spec for Replit – Credit Sentinel (Chin Hin Credit Scoring MVP)
+Project: Credit Sentinel – AI‑powered replica of Chin Hin's eForm credit scoring system.
+
+1. Global Design System
+Colors (Chin Hin corporate)
+text
+Primary: #1E3A8A (buttons, links)
+Success: #10B981 (approve)
+Warning: #F59E0B (review)
+Error: #EF4444 (reject)
+Background: #F9FAFB
+Card: #FFFFFF
+Border: #E5E7EB
+Text: #111827 (main), #4B5563 (secondary)
+Typography
+Font: Inter, system-ui
+
+Page titles: 24px semibold
+
+Section titles: 18px semibold
+
+Body: 14px regular
+
+Labels/meta: 12px
+
+Layout
+Top bar: Logo + "Credit Sentinel" + page title + user avatar/role
+
+Left sidebar: Dashboard, Applications, New Application, Decision History, Reports, Settings
+
+Content: max 1440px wide, centered, light gray page bg, white cards (8px radius, subtle shadow)
+
+2. Landing Page (/)
+Purpose: Welcome screen + overview for new users.
+
+Layout:
+
+text
+┌──────────────────────────────────────────────────────────────┐
+│ Chin Hin Logo | Credit Sentinel                           │ [User Avatar] │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  🚀 Welcome to Credit Sentinel                               │
+│  Your AI Credit Officer Agent                                │
+│                                                              │
+│  Agent processes CTOS reports in 3 steps:                    │
+│  1. Extract fields ✓ 2. Score & categorize ✓ 3. Recommend ✓  │
+│                                                              │
+│  ┌─────────────────────┐ ┌─────────────────────┐ ┌───────────┐│
+│  │ New Applications    │ │ Avg Turnaround      │ │ Accuracy  ││
+│  │        12            │ │      28 min         │ │    94%    ││
+│  │   Today              │ │   (vs 3 days)       │ │   match   ││
+│  └─────────────────────┘ └─────────────────────┘ └──────────┘│
+│                                                              │
+│  [Start New Application]  [View Queue]  [Recent Decisions]   │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+Sections:
+
+Hero text + agent step summary.
+
+3 KPI cards.
+
+3 large action buttons (primary: Start New Application).
+
+Small table below: “Recent activity” (5 rows: customer, status, agent score, officer decision).
+
+3. Applications Queue (/applications)
+Filters (top):
+
+Status dropdown
+
+Risk category dropdown
+
+Search input
+
+Date range picker
+
+Table columns:
+
+Customer
+
+Requested Limit (RM)
+
+Risk Category badge
+
+Agent Status (Extracting / Ready / Error)
+
+Age (days)
+
+Action button: "Open"
+
+4. New Application (/applications/new)
+Step indicator:
+1. Upload CTOS → 2. Agent Processes → 3. Review Decision
+
+Two‑column form:
+
+Left column (60%):
+
+text
+┌─────────────────────────────┐
+│ Upload CTOS Report          │
+│                              │
+│ [Drag & Drop Area]          │
+│ "Drop CTOS PDF here"        │
+│ or "Browse files"           │
+│                              │
+│ Supported: PDF only         │
+│ Max: 15MB                   │
+└─────────────────────────────┘
+Right column (40%):
+
+text
+Customer Name: [input] *
+Requested Limit: RM [number] *
+Salesman: [select] *
+Notes: [textarea]
+Primary button (full width bottom):
+"Start Credit Sentinel Agent →"
+
+5. Agent Decision Pack (/applications/:id/agent-pack)
+Header:
+"Credit Sentinel Agent – Decision Pack"
+"Customer: ABC Trading Sdn Bhd | Requested: RM 500,000"
+
+3‑column layout (exact Chin Hin form replica):
+
+Left (25%): CTOS Preview
+text
+┌─────────────────────────────┐
+│ CTOS PDF Preview            │
+│ [Placeholder image/card]    │
+│ Pages: 15 | Confidence: 93% │
+└─────────────────────────────┘
+Center (50%): Chin Hin Scoring Form Replica
+text
+┌─────────────────────────────────────┐
+│ Type of Customer                    │
+│ [New Credit ○ | Renewal ●]          │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Salesman Profile                    │
+│ Salesman Name: John Tan             │
+│ Territory: Klang Valley             │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Customer Information                │
+│ Customer: ABC Trading Sdn Bhd       │
+│ Reg No: 123456-X                    │
+│ Address: Lot 1, Jalan ABC           │
+│ Industry: Trading                   │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ CCRIS/CTOS for Company (25%)        │
+│ Paid-up Capital: RM 1,000,000 ✓    │
+│ Directors: 3 ✓                      │
+│ Litigation: No ✓                    │
+│ [Edit icon for each field]          │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Financial Information (25%)         │
+│ Net Worth: RM 1,250,000 ✓           │
+│ Profit/Loss: RM 250,000 ✓           │
+│ Gearing Ratio: 1.2 ⚠                │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Pledged/Collateral (20%)            │
+│ [Table: Bank | Type | Limit | Status]│
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Company Background (10%)            │
+│ Years Trading: 8 years ✓            │
+│ Related Companies: None ✓           │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ Audit Trail                         │
+│ Agent Score: 78/100                 │
+│ Risk Grade: Medium                  │
+│ Prob. Default: 2.1%                 │
+└─────────────────────────────────────┘
+Right (25%): Agent Recommendation
+text
+┌─────────────────────────────────────┐
+│ Agent Recommends                    │
+│ APPROVE up to RM 500,000            │
+│                                     │
+│ Rationale:                          │
+│ ✓ Strong paid-up capital            │
+│ ✓ No litigation                     │
+│ ⚠ Moderate gearing (1.2x)           │
+│                                     │
+│ Policy Rules Applied:               │
+│ • Min Capital ✓ (+10 pts)           │
+│ • No Litigation ✓ (+15 pts)         │
+│ • Gearing Penalty ⚠ (-5 pts)        │
+│                                     │
+│ [Approve as-is →] [Review fields →] │
+└─────────────────────────────────────┘
+6. Final Decision Screen (/applications/:id/decision)
+Top:
+"Agent suggests: APPROVE RM 500,000 | Your decision: [select]"
+
+3 choice cards:
+
+Approve: "Customer suitable" + Approved Limit input (prefilled).
+
+Reject: "Risk too high" + Reason dropdown.
+
+Review: "Need more info" + Follow‑up date.
+
+Justification: textarea (required if override).
+
+Buttons: "Back" | "Confirm Decision".
+
+7. Decision History (/history)
+Filters + table:
+
+Customer | Decision | Risk | Agent Match (✓/✕) | Limit | Officer | Date | View
+
+8. Reports (/reports)
+Pie chart: decisions breakdown.
+
+Bar chart: turnaround time.
+
+Table: top approvals.
+
+Replit Prompt (Copy‑Paste Ready)
+text
+Build Credit Sentinel – React + TypeScript + Tailwind CSS web app for Chin Hin's credit scoring form.
+
+**Global**: AppShell with top bar (logo + "Credit Sentinel" + title + user), left sidebar (Dashboard, Applications, New Application, Decision History, Reports), content max 1440px.
+
+**Colors**: #1E3A8A primary blue, #F9FAFB bg, #FFFFFF cards.
+
+**Screens**:
+
+1. `/` Dashboard: 4 KPI cards, 2 charts (Recharts), recent applications table.
+
+2. `/applications` Queue: filters (status, risk, search) + table (Customer, Limit, Risk, Agent Status, Age, Action).
+
+3. `/applications/new`: 2‑column. Left: CTOS drag‑drop upload. Right: form (Customer*, Limit*, Salesman). Button "Start Agent →" navigates to mock agent pack.
+
+4. `/applications/:id/agent-pack`: 3‑column masterpiece:
+   - Left: CTOS preview placeholder.
+   - Center: EXACT replica of Chin Hin scoring form with sections (Type of Customer, Salesman Profile, Customer Info, CTOS 25%, Financial 25%, Collateral 20%, Background 10%, Audit Trail). Each field shows value + confidence (High/Med/Low) + edit icon.
+   - Right: Agent recommendation card (big APPROVE/REJECT badge, rationale bullets, rules table).
+
+5. `/applications/:id/decision`: Agent suggestion vs 3 officer choice cards (Approve with limit input, Reject with reason, Review with date). Justification textarea.
+
+6. `/history`: filters + decisions table.
+
+7. `/reports`: charts + top approvals table.
+
+Mock all data. Use React Router, Recharts for charts. Make it look enterprise‑professional like their eForm system. Focus on the agent‑pack screen as the hero.
