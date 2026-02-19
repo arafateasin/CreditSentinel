@@ -41,15 +41,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-white text-slate-900 border-r border-slate-100 shadow-sm">
-      <div className="p-8 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20 ring-4 ring-primary/5">
-          <ShieldCheck className="w-6 h-6" />
+      <Link href="/">
+        <div className="p-8 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20 ring-4 ring-primary/5">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="font-black text-xl leading-none tracking-tight">SENTINEL</h1>
+            <p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-widest">Autonomous Engine</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-black text-xl leading-none tracking-tight">SENTINEL</h1>
-          <p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-widest">Autonomous Engine</p>
-        </div>
-      </div>
+      </Link>
       
       <div className="px-4 py-8 flex-1">
         <nav className="space-y-1">
