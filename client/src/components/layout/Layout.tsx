@@ -12,7 +12,8 @@ import {
   ChevronDown,
   Menu,
   ShieldCheck,
-  Bot
+  Bot,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -40,25 +41,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-white text-slate-900 border-r border-slate-100 shadow-sm">
-      <Link href="/">
-        <div className="p-8 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-          <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20 ring-4 ring-primary/5">
-            <ShieldCheck className="w-6 h-6" />
+    <div className="flex flex-col h-full bg-white text-slate-900 shadow-sm">
+      <div className="p-8 flex items-center justify-between border-b border-slate-50">
+        <Link href="/">
+          <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20 ring-4 ring-primary/5">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="font-black text-xl leading-none tracking-tight">SENTINEL</h1>
+              <p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-widest">Autonomous Engine</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-black text-xl leading-none tracking-tight">SENTINEL</h1>
-            <p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-widest">Autonomous Engine</p>
-          </div>
-        </div>
-      </Link>
+        </Link>
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMobileOpen(false)}>
+          <X className="w-6 h-6" />
+        </Button>
+      </div>
       
       <div className="px-4 py-8 flex-1">
         <nav className="space-y-1">
           {navigation.map((item) => {
             const isActive = location === item.href || (item.href !== '/' && location.startsWith(item.href));
             return (
-              <Link key={item.name} href={item.disabled ? "#" : item.href}>
+              <Link key={item.name} href={item.disabled ? "#" : item.href} onClick={() => setIsMobileOpen(false)}>
                 <div
                   className={cn(
                     "flex items-center gap-4 px-5 py-3 rounded-2xl text-sm font-black transition-all cursor-pointer group",
@@ -92,12 +98,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex selection:bg-primary selection:text-white">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-80 fixed inset-y-0 z-50">
-        <SidebarContent />
-      </div>
-
-      {/* Mobile Sidebar */}
+      {/* Drawer */}
       <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <SheetContent side="left" className="p-0 w-80 border-none shadow-2xl">
           <SidebarContent />
@@ -105,10 +106,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Sheet>
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-80 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-20 border-b border-slate-100 bg-white/80 backdrop-blur-xl flex items-center justify-between px-10 sticky top-0 z-40">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="lg:hidden h-12 w-12 rounded-2xl bg-slate-50" onClick={() => setIsMobileOpen(true)}>
+            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-slate-50 hover:bg-slate-100" onClick={() => setIsMobileOpen(true)}>
               <Menu className="w-6 h-6" />
             </Button>
             <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
