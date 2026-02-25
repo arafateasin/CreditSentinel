@@ -151,13 +151,13 @@ export default function ApplicationsQueue() {
                     <TableCell className="font-bold text-slate-700">RM {app.limit.toLocaleString()}</TableCell>
                     <TableCell>
                       {app.risk === "Low" ? (
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-bold px-2 py-0.5">LOW</Badge>
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-bold px-2 py-0.5 uppercase tracking-widest text-[9px]">Risk: LOW</Badge>
                       ) : app.risk === "Moderate" ? (
-                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 font-bold px-2 py-0.5">MODERATE</Badge>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 font-bold px-2 py-0.5 uppercase tracking-widest text-[9px]">Risk: MEDIUM</Badge>
                       ) : app.risk === "High" ? (
-                        <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 font-bold px-2 py-0.5">HIGH</Badge>
+                        <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 font-bold px-2 py-0.5 uppercase tracking-widest text-[9px]">Risk: HIGH</Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200 font-bold px-2 py-0.5">N/A</Badge>
+                        <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200 font-bold px-2 py-0.5 uppercase tracking-widest text-[9px]">Risk: N/A</Badge>
                       )}
                     </TableCell>
                     <TableCell>
@@ -172,11 +172,13 @@ export default function ApplicationsQueue() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={cn(
-                        "font-bold text-[10px] uppercase tracking-wider",
-                        app.officerStatus === "In Review" ? "bg-indigo-50 text-indigo-700 border-indigo-100" : "bg-slate-100 text-slate-500"
+                      <Badge variant="outline" className={cn(
+                        "font-black text-[9px] uppercase tracking-widest px-2 py-0.5",
+                        app.officerStatus === "In Review" ? "bg-indigo-50 text-indigo-700 border-indigo-100" : 
+                        app.officerStatus === "Completed" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                        "bg-slate-100 text-slate-500 border-slate-200"
                       )}>
-                        {app.officerStatus}
+                        Status: {app.officerStatus}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-slate-400 text-xs font-bold">{app.age}</TableCell>

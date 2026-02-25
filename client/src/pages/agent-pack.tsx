@@ -26,7 +26,7 @@ export default function AgentPack() {
     </div>
   );
 
-  const FieldRow = ({ label, value, confidence, warning }: { label: string, value: string, confidence?: string, warning?: boolean }) => (
+  const FieldRow = ({ label, value, confidence, warning }: { label: string, value: string, confidence?: "High" | "Medium" | "Low", warning?: boolean }) => (
     <div className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0 px-2 group">
       <div className="space-y-0.5">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{label}</p>
@@ -39,9 +39,11 @@ export default function AgentPack() {
         {confidence && (
           <Badge variant="outline" className={cn(
             "text-[8px] font-black h-4 px-1.5",
-            confidence === "High" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"
+            confidence === "High" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
+            confidence === "Medium" ? "bg-amber-50 text-amber-700 border-amber-100" :
+            "bg-rose-50 text-rose-700 border-rose-100"
           )}>
-            {confidence}
+            {confidence} {confidence === "High" ? "✓" : confidence === "Medium" ? "⚠" : "✗"}
           </Badge>
         )}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
@@ -56,29 +58,38 @@ export default function AgentPack() {
     <Layout>
       <div className="space-y-6 max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between border-b pb-4">
-          <div className="flex items-center gap-4">
-            <Link href="/applications">
-              <Button variant="ghost" size="icon"><ChevronLeft className="w-5 h-5"/></Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-black tracking-tight">Agent Decision Pack</h1>
-              <p className="text-sm font-bold text-slate-500">
-                Customer: <span className="text-slate-900">ABC Trading Sdn Bhd</span> | Requested: <span className="text-slate-900">RM 500,000</span>
-              </p>
+        <div className="flex flex-col gap-4 border-b pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/applications">
+                <Button variant="ghost" size="icon"><ChevronLeft className="w-5 h-5"/></Button>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-black tracking-tight">Agent Decision Pack</h1>
+                <p className="text-sm font-bold text-slate-500 italic">
+                  Chin Hin Credit Scoring Form (auto-filled by agent) ✓ Matches your existing eForm structure exactly
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+               <Button variant="outline" className="font-bold">Review Fields</Button>
+               <Button onClick={() => setLocation(`/applications/${id}/decision`)} className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 font-black shadow-lg shadow-primary/20">
+                  Confirm Decision <ArrowRight className="ml-2 w-4 h-4" />
+               </Button>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-             <Button variant="outline" className="font-bold">Review Fields</Button>
-             <Button onClick={() => setLocation(`/applications/${id}/decision`)} className="font-black shadow-lg shadow-primary/20">
-                Approve As-Is <ArrowRight className="ml-2 w-4 h-4" />
-             </Button>
+          <div className="bg-slate-900 text-white p-3 rounded-2xl flex items-center justify-between px-6 shadow-xl">
+             <div className="flex items-center gap-3">
+                <ShieldCheck className="w-5 h-5 text-primary" />
+                <span className="text-sm font-black uppercase tracking-wider">Chin Hin Credit Scoring Form Replica</span>
+             </div>
+             <Badge className="bg-primary/20 text-primary border-none font-black text-[10px]">OFFICIAL FORM V1.2</Badge>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)] min-h-[700px]">
-          {/* Left: CTOS Preview */}
-          <Card className="flex flex-col border-slate-200 shadow-sm overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[700px]">
+          {/* Left: CTOS Preview - Order changed for mobile: 3rd */}
+          <Card className="flex flex-col border-slate-200 shadow-sm overflow-hidden order-3 lg:order-1 h-[400px] lg:h-auto">
              <CardHeader className="bg-slate-50 border-b py-3">
                 <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-500">CTOS PDF Preview</CardTitle>
              </CardHeader>
@@ -97,8 +108,8 @@ export default function AgentPack() {
              </CardContent>
           </Card>
 
-          {/* Center: Scoring Form Replica */}
-          <Card className="lg:col-span-2 flex flex-col border-slate-200 shadow-sm overflow-hidden">
+          {/* Center: Scoring Form Replica - Order changed for mobile: 1st */}
+          <Card className="lg:col-span-2 flex flex-col border-slate-200 shadow-sm overflow-hidden order-1 lg:order-2">
              <CardHeader className="bg-slate-50 border-b py-3 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-500">Chin Hin Scoring Form Replica</CardTitle>
                 <Badge variant="outline" className="bg-white border-primary/20 text-primary font-black">MVP V1.0</Badge>
@@ -109,11 +120,11 @@ export default function AgentPack() {
                    <div className="p-4 flex gap-8">
                       <div className="flex items-center gap-2">
                          <div className="w-4 h-4 rounded-full border border-slate-300" />
-                         <span className="text-xs font-bold text-slate-400">New Credit</span>
+                         <span className="text-xs font-bold text-slate-400">New Credit ○</span>
                       </div>
                       <div className="flex items-center gap-2">
                          <div className="w-4 h-4 rounded-full border-4 border-primary" />
-                         <span className="text-xs font-bold text-slate-900">Renewal</span>
+                         <span className="text-xs font-bold text-slate-900">Renewal ●</span>
                       </div>
                    </div>
 
@@ -124,25 +135,57 @@ export default function AgentPack() {
                    </div>
 
                    <SectionHeader title="Customer Information" />
-                   <div className="grid grid-cols-2">
-                      <FieldRow label="Customer" value="ABC Trading Sdn Bhd" confidence="High" />
-                      <FieldRow label="Reg No" value="123456-X" confidence="High" />
+                   <div className="grid grid-cols-1 md:grid-cols-2">
+                      <FieldRow label="Customer Name" value="ABC Trading Sdn Bhd" confidence="High" />
+                      <FieldRow label="Registration No" value="123456-X" confidence="High" />
                       <FieldRow label="Industry" value="Trading" confidence="Medium" />
                       <FieldRow label="Address" value="Lot 1, Jalan ABC, KL" confidence="High" />
                    </div>
 
                    <SectionHeader title="CCRIS/CTOS for Company (25%)" />
-                   <div className="grid grid-cols-2">
+                   <div className="grid grid-cols-1 md:grid-cols-2">
                       <FieldRow label="Paid-up Capital" value="RM 1,000,000" confidence="High" />
-                      <FieldRow label="Directors" value="3" confidence="High" />
-                      <FieldRow label="Litigation" value="No" confidence="High" />
+                      <FieldRow label="No. of Directors" value="3" confidence="High" />
+                      <FieldRow label="Litigation Status" value="None" confidence="High" />
+                      <div className="flex items-end justify-end p-2">
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Weight: 25%</span>
+                      </div>
                    </div>
 
                    <SectionHeader title="Financial Information (25%)" />
-                   <div className="grid grid-cols-2">
+                   <div className="grid grid-cols-1 md:grid-cols-2">
                       <FieldRow label="Net Worth" value="RM 1,250,000" confidence="Medium" />
                       <FieldRow label="Profit/Loss" value="RM 250,000" confidence="High" />
-                      <FieldRow label="Gearing Ratio" value="1.2" confidence="High" warning={true} />
+                      <FieldRow label="Gearing Ratio" value="1.2x" confidence="High" warning={true} />
+                      <div className="flex items-end justify-end p-2">
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Weight: 25%</span>
+                      </div>
+                   </div>
+
+                   <SectionHeader title="Pledged/Collateral (20%)" />
+                   <div className="p-4 bg-slate-50/50">
+                      <div className="border rounded-xl bg-white overflow-hidden">
+                         <table className="w-full text-[10px]">
+                            <thead className="bg-slate-50 border-b">
+                               <tr>
+                                  <th className="p-2 text-left font-black">Facility Type</th>
+                                  <th className="p-2 text-right font-black">Limit (RM)</th>
+                                  <th className="p-2 text-right font-black">Outstanding (RM)</th>
+                               </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                               <tr>
+                                  <td className="p-2 font-bold">Term Loan</td>
+                                  <td className="p-2 text-right">500,000</td>
+                                  <td className="p-2 text-right">420,000</td>
+                               </tr>
+                            </tbody>
+                         </table>
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight italic">Matches Chin Hin eForm v1.2</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">Weight: 20%</p>
+                      </div>
                    </div>
 
                    <SectionHeader title="Audit Trail" />
@@ -164,8 +207,8 @@ export default function AgentPack() {
              </ScrollArea>
           </Card>
 
-          {/* Right: Agent Recommendation */}
-          <Card className="border-primary/20 bg-primary/5 shadow-none overflow-hidden h-fit">
+          {/* Right: Agent Recommendation - Order changed for mobile: 2nd */}
+          <Card className="border-primary/20 bg-primary/5 shadow-none overflow-hidden h-fit order-2 lg:order-3">
              <CardHeader className="bg-primary/10 border-b border-primary/10 py-3">
                 <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
                    <Bot className="w-4 h-4" /> Agent Recommends

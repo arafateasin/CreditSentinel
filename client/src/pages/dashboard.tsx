@@ -23,9 +23,9 @@ import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const kpis = [
-    { title: "New Applications", value: "12", sub: "Today", icon: Zap },
-    { title: "Avg Turnaround", value: "28 min", sub: "vs 3 days manual", icon: Clock },
-    { title: "Accuracy", value: "94%", sub: "Agent match rate", icon: Target },
+    { title: "Applications Alignment", value: "12", sub: "Today", icon: Zap },
+    { title: "Agent vs Manual", value: "28 min", sub: "vs 3-4 days manual", icon: Clock },
+    { title: "Decision Alignment", value: "94%", sub: "Officer follows Agent", icon: Target },
   ];
 
   const recentActivity = [
@@ -58,18 +58,36 @@ export default function Dashboard() {
 
         {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {kpis.map((kpi, i) => (
-            <Card key={i} className="border-none shadow-xl shadow-slate-200/50">
-              <CardContent className="p-8 text-center space-y-2">
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
-                  <kpi.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">{kpi.title}</h3>
-                <p className="text-3xl font-black text-slate-900">{kpi.value}</p>
-                <p className="text-xs text-slate-400 font-bold">{kpi.sub}</p>
-              </CardContent>
-            </Card>
-          ))}
+          <Card className="border-none shadow-xl shadow-slate-200/50">
+            <CardContent className="p-8 text-center space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">Applications Alignment</h3>
+              <p className="text-3xl font-black text-slate-900">12</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Today</p>
+            </CardContent>
+          </Card>
+          <Card className="border-none shadow-xl shadow-slate-200/50">
+            <CardContent className="p-8 text-center space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">Agent vs Manual</h3>
+              <p className="text-3xl font-black text-slate-900">28 min</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">vs 3-4 days manual</p>
+            </CardContent>
+          </Card>
+          <Card className="border-none shadow-xl shadow-slate-200/50">
+            <CardContent className="p-8 text-center space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">Decision Alignment</h3>
+              <p className="text-3xl font-black text-slate-900">94%</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Officer follows Agent</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Action Buttons */}

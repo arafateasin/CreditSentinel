@@ -107,7 +107,10 @@ export default function DecisionApproval() {
                             {decision || "Pending"}
                          </p>
                          {isOverride && (
-                           <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 h-5 px-2 text-[9px] font-black tracking-widest">OVERRIDE</Badge>
+                           <div className="flex flex-col items-end gap-1">
+                             <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 h-5 px-2 text-[9px] font-black tracking-widest uppercase">Agent Match: ✗ Override</Badge>
+                             <p className="text-[9px] text-rose-600 font-bold uppercase italic">Officer decision ≠ agent</p>
+                           </div>
                          )}
                       </div>
                    </div>
@@ -121,9 +124,9 @@ export default function DecisionApproval() {
             {/* Selection Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                {[
-                 { id: "approve", label: "Approve", icon: CheckCircle2, color: "emerald", desc: "Customer is suitable." },
-                 { id: "reject", label: "Reject", icon: XCircle, color: "rose", desc: "Risk level too high." },
-                 { id: "review", label: "KIV / Review", icon: AlertCircle, color: "amber", desc: "Need more info." }
+                 { id: "approve", label: "Approve", icon: CheckCircle2, color: "emerald", desc: "Sales notified immediately, customer onboarded" },
+                 { id: "reject", label: "Reject", icon: XCircle, color: "rose", desc: "Customer receives rejection notice + reason" },
+                 { id: "review", label: "KIV / Review", icon: AlertCircle, color: "amber", desc: "Follow-up task created, Sales notified" }
                ].map((opt) => (
                  <div 
                    key={opt.id}

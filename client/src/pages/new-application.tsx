@@ -97,10 +97,13 @@ export default function NewApplication() {
                           <p className="font-black text-slate-900 text-lg">Drop CTOS PDF here</p>
                           <p className="text-sm text-slate-400 font-medium mt-1">or Browse files</p>
                         </div>
-                        <div className="pt-4 flex justify-center gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                           <span>Supported: PDF Only</span>
-                           <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-1" />
-                           <span>Max: 15MB</span>
+                        <div className="pt-4 flex flex-col items-center gap-2">
+                           <div className="flex justify-center gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <span>Supported: CTOS PDF Only</span>
+                              <span className="w-1.5 h-1.5 rounded-full bg-slate-200 mt-1" />
+                              <span>Max: 15MB</span>
+                           </div>
+                           <p className="text-[10px] text-amber-600 font-bold italic">Supported: CTOS PDF reports only</p>
                         </div>
                       </div>
                     )}

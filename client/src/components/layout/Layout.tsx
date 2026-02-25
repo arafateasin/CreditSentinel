@@ -112,10 +112,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-slate-50 hover:bg-slate-100" onClick={() => setIsMobileOpen(true)}>
               <Menu className="w-6 h-6" />
             </Button>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <div className="w-1.5 h-6 bg-primary rounded-full hidden sm:block" />
-              {navigation.find((n) => n.href === location || (n.href !== '/' && location.startsWith(n.href)))?.name || "Credit Sentinel"}
-            </h2>
+            <div className="flex items-center gap-2">
+              <img src="https://chinhingroup.com/wp-content/uploads/2021/01/logo-chin-hin-group.png" alt="Chin Hin" className="h-8 w-auto hidden sm:block" />
+              <div className="w-px h-6 bg-slate-200 mx-2 hidden sm:block" />
+              <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                <div className="w-1.5 h-6 bg-primary rounded-full hidden sm:block" />
+                {navigation.find((n) => n.href === location || (n.href !== '/' && location.startsWith(n.href)))?.name || "Credit Sentinel"}
+              </h2>
+            </div>
           </div>
 
           <div className="flex items-center gap-6">
