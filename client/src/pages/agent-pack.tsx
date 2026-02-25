@@ -11,7 +11,8 @@ import {
   Bot,
   ChevronLeft,
   Search,
-  Edit2
+  Edit2,
+  ShieldCheck
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
