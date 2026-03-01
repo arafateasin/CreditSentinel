@@ -1,103 +1,238 @@
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, Eye } from "lucide-react";
+import { Search, Eye, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-const historyData = [
-  { customer: "ABC Trading Sdn Bhd", decision: "Approved", risk: "Medium", match: true, limit: "500,000", officer: "Alex Morgan", date: "2023-10-24" },
-  { customer: "Mega Build Construction", decision: "Approved", risk: "Low", match: true, limit: "500,000", officer: "Alex Morgan", date: "2023-10-23" },
-  { customer: "Global Logistics Partners", decision: "Rejected", risk: "High", match: false, limit: "0", officer: "Sarah Chen", date: "2023-10-22" },
-  { customer: "Sunrise Properties", decision: "Review", risk: "Medium", match: true, limit: "0", officer: "Alex Morgan", date: "2023-10-21" },
-];
+import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
 
 export default function HistoryPage() {
+  const [search, setSearch] = useState("");
+
+  const { data: historyRaw = [] } = useQuery<
+    Array<{ app: any; score: any; decision: any }>
+  >({
+    queryKey: ["/api/history"],
+    queryFn: () => apiGet("/api/history"),
+    refetchInterval: 30000,
+  });
+
+  const historyData = historyRaw.map(({ app, score, decision }) => ({
+    id: app.id,
+    customer: app.customerName,
+    decision: decision?.officerDecision
+      ? decision.officerDecision.charAt(0).toUpperCase() +
+        decision.officerDecision.slice(1)
+      : "—",
+    risk: score?.riskCategory
+      ? score.riskCategory.charAt(0).toUpperCase() + score.riskCategory.slice(1)
+      : "—",
+    match: decision?.officerDecision === score?.recommendation,
+    limit: decision?.officerLimit
+      ? decision.officerLimit.toLocaleString()
+      : "0",
+    officer: decision?.officerId ?? "Credit Officer",
+    date: decision?.createdAt
+      ? new Date(decision.createdAt).toLocaleDateString("en-MY")
+      : "—",
+  }));
+
+  const filtered = historyData.filter((r) =>
+    r.customer.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <Layout>
       <div className="space-y-6 max-w-6xl mx-auto py-8">
         <div>
-          <h1 className="text-2xl font-black tracking-tight">Decision History</h1>
-          <p className="text-sm text-slate-500 font-medium mt-1">Audit log of all past credit decisions and agent matches.</p>
+          <h1 className="text-2xl font-black tracking-tight">
+            Decision History
+          </h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Audit log of all past credit decisions and agent matches.
+          </p>
         </div>
 
         <Card className="border-none shadow-xl shadow-slate-200/50">
-          <CardHeader className="border-b border-slate-50 flex flex-row items-center justify-between">
-            <div className="flex items-center gap-4 flex-1 max-w-md">
-              <div className="relative flex-1">
+          <CardHeader className="border-b border-slate-50">
+            <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+              <div className="relative flex-1 min-w-[180px]">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <Input placeholder="Search history..." className="pl-10 h-10 border-slate-200" />
+                <Input
+                  placeholder="Search customer..."
+                  className="pl-10 h-10 border-slate-200"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
-              <Button variant="outline" className="h-10 border-slate-200"><Filter className="w-4 h-4 mr-2" /> Filter</Button>
-            </div>
-            <div className="flex items-center gap-2">
-               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Show Overrides Only</span>
-               <div className="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
+              <Select>
+                <SelectTrigger className="h-10 w-[150px] border-slate-200 font-bold">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="review">KIV / Review</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="h-10 w-[150px] border-slate-200 font-bold">
+                  <SelectValue placeholder="Risk" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Risk Levels</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                type="date"
+                className="h-10 w-40 border-slate-200 font-bold"
+                placeholder="From date"
+              />
+              <Input
+                type="date"
+                className="h-10 w-40 border-slate-200 font-bold"
+                placeholder="To date"
+              />
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                  Overrides Only
+                </span>
+                <div className="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
                   <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
-               </div>
+                </div>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead className="font-bold text-slate-900">Customer</TableHead>
-                  <TableHead className="font-bold text-slate-900">Decision</TableHead>
-                  <TableHead className="font-bold text-slate-900">Risk</TableHead>
-                  <TableHead className="font-bold text-slate-900">Agent Match</TableHead>
-                  <TableHead className="font-bold text-slate-900">Limit (RM)</TableHead>
-                  <TableHead className="font-bold text-slate-900">Officer</TableHead>
-                  <TableHead className="font-bold text-slate-900">Date</TableHead>
-                  <TableHead className="text-right font-bold text-slate-900">Action</TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Customer
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Decision
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Risk
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Agent Match
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Limit (RM)
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Officer
+                  </TableHead>
+                  <TableHead className="font-bold text-slate-900">
+                    Date
+                  </TableHead>
+                  <TableHead className="text-right font-bold text-slate-900">
+                    Action
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {historyData.map((row, i) => (
-                  <TableRow key={i} className="hover:bg-slate-50 transition-colors">
-                    <TableCell className="font-bold text-slate-700">{row.customer}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={cn(
-                        "font-black text-[10px] uppercase",
-                        row.decision === "Approved" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                        row.decision === "Rejected" ? "bg-rose-50 text-rose-700 border-rose-100" : "bg-amber-50 text-amber-700 border-amber-100"
-                      )}>
-                        {row.decision}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="font-bold text-[10px] uppercase">{row.risk}</Badge>
-                    </TableCell>
-                    <TableCell>
-                       {row.match ? (
-                         <div className="flex items-center gap-1.5 text-emerald-600">
-                           <CheckCircle2 className="w-4 h-4" />
-                           <span className="text-[10px] font-black uppercase tracking-widest">Match</span>
-                         </div>
-                       ) : (
-                         <div className="flex items-center gap-1.5 text-rose-600">
-                           <AlertCircle className="w-4 h-4" />
-                           <span className="text-[10px] font-black uppercase tracking-widest">Override</span>
-                         </div>
-                       )}
-                    </TableCell>
-                    <TableCell className="font-bold">{row.limit}</TableCell>
-                    <TableCell className="text-slate-500 font-medium">{row.officer}</TableCell>
-                    <TableCell className="text-slate-400 font-bold text-xs">{row.date}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                         <Eye className="w-4 h-4 text-primary" />
-                      </Button>
+                {filtered.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      No completed decisions yet.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filtered.map((row, i) => (
+                    <TableRow
+                      key={i}
+                      className="hover:bg-slate-50 transition-colors"
+                    >
+                      <TableCell className="font-bold text-slate-700">
+                        {row.customer}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "font-black text-[10px] uppercase",
+                            row.decision === "Approved"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                              : row.decision === "Rejected"
+                              ? "bg-rose-50 text-rose-700 border-rose-100"
+                              : "bg-amber-50 text-amber-700 border-amber-100",
+                          )}
+                        >
+                          {row.decision}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className="font-bold text-[10px] uppercase"
+                        >
+                          {row.risk}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {row.match ? (
+                          <div className="flex items-center gap-1.5 text-emerald-600">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">
+                              Match
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-rose-600">
+                            <AlertCircle className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">
+                              Override
+                            </span>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-bold">{row.limit}</TableCell>
+                      <TableCell className="text-slate-500 font-medium">
+                        {row.officer}
+                      </TableCell>
+                      <TableCell className="text-slate-400 font-bold text-xs">
+                        {row.date}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Eye className="w-4 h-4 text-primary" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </CardContent>
@@ -106,6 +241,3 @@ export default function HistoryPage() {
     </Layout>
   );
 }
-
-import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
