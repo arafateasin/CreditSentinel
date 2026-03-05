@@ -1,7 +1,13 @@
 """Pydantic schemas for Credit Sentinel API and database models."""
 from datetime import datetime
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+
+def to_camel(string: str) -> str:
+    """Convert snake_case to camelCase."""
+    parts = string.split('_')
+    return parts[0] + ''.join(word.capitalize() for word in parts[1:])
 
 
 # ─── Application Models ──────────────────────────────────────────────────────
@@ -15,6 +21,8 @@ class ApplicationCreate(BaseModel):
 
 class Application(BaseModel):
     """Credit application record."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     id: str
     officer_id: str
     customer_name: str
@@ -22,7 +30,8 @@ class Application(BaseModel):
     salesman: str
     pdf_url: str
     pdf_blob_name: str
-    status: Literal["new", "extracting", "extracted", "scoring", "scored", "error", "completed"]
+    original_filename: str = "CTOS_REPORT.pdf"
+    status: Literal["new", "extracting", "extracted", "scoring", "scored", "error", "completed", "rejected"]
     agent_stage: str = "new"
     created_at: datetime
     updated_at: datetime
@@ -32,6 +41,8 @@ class Application(BaseModel):
 
 class ExtractedField(BaseModel):
     """Single extracted field with confidence."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     value: str
     confidence: Literal["high", "medium", "low"]
     edited: bool = False
@@ -40,6 +51,8 @@ class ExtractedField(BaseModel):
 
 class ExtractionDirector(BaseModel):
     """Director information from CTOS."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     name: str
     id: str
     age: int
@@ -48,6 +61,8 @@ class ExtractionDirector(BaseModel):
 
 class ExtractionBankingFacility(BaseModel):
     """Banking facility record."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     bank: str
     facility: str
     limit: str
@@ -57,6 +72,8 @@ class ExtractionBankingFacility(BaseModel):
 
 class ExtractionFields(BaseModel):
     """All extracted fields from CTOS report."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     company_name: ExtractedField
     reg_no: ExtractedField
     inc_date: ExtractedField
@@ -75,6 +92,8 @@ class ExtractionFields(BaseModel):
 
 class Extraction(BaseModel):
     """Extraction record."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     id: str
     app_id: str
     raw_text: str
@@ -88,6 +107,8 @@ class Extraction(BaseModel):
 
 class ScoreRuleFired(BaseModel):
     """Individual risk rule result."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     rule: str
     weight: float
     score: float
@@ -96,6 +117,8 @@ class ScoreRuleFired(BaseModel):
 
 class Score(BaseModel):
     """Risk score record."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     id: str
     app_id: str
     total_score: float  # 0-1 range
@@ -118,6 +141,8 @@ class DecisionInput(BaseModel):
 
 class Decision(BaseModel):
     """Credit decision record."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     id: str
     app_id: str
     officer_id: str
@@ -131,6 +156,8 @@ class Decision(BaseModel):
 
 class AuditLog(BaseModel):
     """Audit trail entry."""
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    
     id: str
     app_id: str
     action: str
@@ -175,6 +202,15 @@ class AgentState(BaseModel):
 
 class ApplicationDetail(Application):
     """Application with all related data."""
+    extraction: Optional[Extraction] = None
+    score: Optional[Score] = None
+    decision: Optional[Decision] = None
+    audit_logs: List[AuditLog] = []
+
+
+class ApplicationResponse(BaseModel):
+    """API response for application detail endpoint."""
+    app: Application
     extraction: Optional[Extraction] = None
     score: Optional[Score] = None
     decision: Optional[Decision] = None

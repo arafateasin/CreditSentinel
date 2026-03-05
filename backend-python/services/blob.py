@@ -65,11 +65,12 @@ class BlobStorageService:
             overwrite=True
         )
         
-        # Generate public URL
-        blob_url = blob_client.url
+        # Generate SAS URL for Azure Document Intelligence to access (valid for 24 hours)
+        sas_url = self.generate_sas_url(blob_name, expiry_hours=24)
+        print(f"[BLOB] Generated SAS URL: {sas_url[:80]}...{sas_url[-40:]}")
         
         return {
-            "url": blob_url,
+            "url": sas_url,
             "blob_name": blob_name
         }
     

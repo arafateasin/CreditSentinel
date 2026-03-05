@@ -130,6 +130,7 @@ export default function NewApplication() {
                     type="file"
                     className="hidden"
                     accept=".pdf"
+                    aria-label="Upload CTOS PDF report"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                   />
                   {file ? (

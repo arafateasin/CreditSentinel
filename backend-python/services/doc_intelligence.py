@@ -1,8 +1,11 @@
 """Azure Document Intelligence service for PDF extraction."""
 import re
+import json
 from typing import Dict, Any, List
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from langchain_openai import AzureChatOpenAI
+from langchain_core.messages import HumanMessage
 from utils.config import settings
 from models.schemas import ExtractedField, ExtractionFields, ExtractionDirector, ExtractionBankingFacility
 
@@ -14,10 +17,19 @@ class DocumentIntelligenceService:
         self.endpoint = settings.doc_intel_endpoint
         self.key = settings.doc_intel_key
         
-        # Initialize client
+        # Initialize Document Intelligence client
         self.client = DocumentAnalysisClient(
             endpoint=self.endpoint,
             credential=AzureKeyCredential(self.key)
+        )
+        
+        # Initialize Azure OpenAI for intelligent extraction
+        self.llm = AzureChatOpenAI(
+            azure_endpoint=settings.azure_openai_endpoint,
+            api_key=settings.azure_openai_key,
+            api_version=settings.azure_openai_api_version,
+            deployment_name=settings.azure_openai_deployment,
+            temperature=0.1,
         )
     
     def _confidence_level(self, score: float) -> str:
@@ -73,6 +85,93 @@ class DocumentIntelligenceService:
         
         return facilities
     
+    async def _extract_fields_with_llm(self, raw_text: str) -> ExtractionFields:
+        """Use GPT-4 to intelligently extract fields from CTOS report."""
+        prompt = f"""You are analyzing a Malaysian CTOS credit report. Extract the following fields from the text.
+Return ONLY a valid JSON object with these exact keys (use "Not Found" if data is missing):
+
+{{
+  "company_name": {{"value": "...", "confidence": "high|medium|low"}},
+  "reg_no": {{"value": "...", "confidence": "high|medium|low"}},
+  "inc_date": {{"value": "...", "confidence": "high|medium|low"}},
+  "address": {{"value": "...", "confidence": "high|medium|low"}},
+  "nature_of_business": {{"value": "...", "confidence": "high|medium|low"}},
+  "paid_up_capital": {{"value": "RM ...", "confidence": "high|medium|low"}},
+  "net_worth": {{"value": "RM ...", "confidence": "high|medium|low"}},
+  "litigation": {{"value": "0", "confidence": "high|medium|low"}},
+  "litigation_amount": {{"value": "RM 0", "confidence": "high|medium|low"}},
+  "special_attention": {{"value": "0", "confidence": "high|medium|low"}},
+  "bankruptcy": {{"value": "0", "confidence": "high|medium|low"}},
+  "num_directors": {{"value": "0", "confidence": "high|medium|low"}},
+  "directors": [
+    {{"name": "DIRECTOR NAME", "id": "IC_NUMBER", "age": 45, "share": "50%"}}
+  ],
+  "banking_facilities": [
+    {{"bank": "BANK NAME", "facility": "TYPE", "limit": "RM 0", "outstanding": "RM 0", "status": "Active"}}
+  ]
+}}
+
+IMPORTANT: 
+- For directors array, each object MUST have: name (string), id (IC number), age (number), share (percentage string)
+- For banking_facilities array, each object MUST have: bank (string), facility (string), limit (string), outstanding (string), status (string)
+- If no directors or banking facilities found, return empty arrays []
+
+CTOS Report Text:
+{raw_text[:8000]}
+
+Return only the JSON object, no other text."""
+
+        try:
+            response = self.llm.invoke([HumanMessage(content=prompt)])
+            result_text = response.content.strip()
+            
+            # Remove markdown code blocks if present
+            if result_text.startswith("```"):
+                result_text = result_text.split("```")[1]
+                if result_text.startswith("json"):
+                    result_text = result_text[4:]
+                result_text = result_text.strip()
+            
+            data = json.loads(result_text)
+            
+            # Convert to ExtractedField objects
+            return ExtractionFields(
+                company_name=ExtractedField(**data.get("company_name", {"value": "Not Found", "confidence": "low"})),
+                reg_no=ExtractedField(**data.get("reg_no", {"value": "Not Found", "confidence": "low"})),
+                inc_date=ExtractedField(**data.get("inc_date", {"value": "Not Found", "confidence": "low"})),
+                address=ExtractedField(**data.get("address", {"value": "Not Found", "confidence": "low"})),
+                nature_of_business=ExtractedField(**data.get("nature_of_business", {"value": "Not Found", "confidence": "low"})),
+                paid_up_capital=ExtractedField(**data.get("paid_up_capital", {"value": "Not Found", "confidence": "low"})),
+                net_worth=ExtractedField(**data.get("net_worth", {"value": "Not Found", "confidence": "low"})),
+                litigation=ExtractedField(**data.get("litigation", {"value": "0", "confidence": "low"})),
+                litigation_amount=ExtractedField(**data.get("litigation_amount", {"value": "RM 0", "confidence": "low"})),
+                special_attention=ExtractedField(**data.get("special_attention", {"value": "0", "confidence": "low"})),
+                bankruptcy=ExtractedField(**data.get("bankruptcy", {"value": "0", "confidence": "low"})),
+                num_directors=ExtractedField(**data.get("num_directors", {"value": "0", "confidence": "low"})),
+                directors=data.get("directors", []),
+                banking_facilities=data.get("banking_facilities", [])
+            )
+        except Exception as e:
+            print(f"[DOC_INTEL] LLM extraction error: {e}")
+            # Return empty fields on error
+            return ExtractionFields(
+                company_name=ExtractedField(value="Not Found", confidence="low"),
+                reg_no=ExtractedField(value="Not Found", confidence="low"),
+                inc_date=ExtractedField(value="Not Found", confidence="low"),
+                address=ExtractedField(value="Not Found", confidence="low"),
+                nature_of_business=ExtractedField(value="Not Found", confidence="low"),
+                paid_up_capital=ExtractedField(value="Not Found", confidence="low"),
+                net_worth=ExtractedField(value="Not Found", confidence="low"),
+                litigation=ExtractedField(value="0", confidence="low"),
+                litigation_amount=ExtractedField(value="RM 0", confidence="low"),
+                special_attention=ExtractedField(value="0", confidence="low"),
+                bankruptcy=ExtractedField(value="0", confidence="low"),
+                num_directors=ExtractedField(value="0", confidence="low"),
+                directors=[],
+                banking_facilities=[]
+            )
+
+    
     async def extract_ctos_pdf(self, pdf_url: str) -> Dict[str, Any]:
         """
         Extract CTOS report data from PDF URL.
@@ -83,13 +182,17 @@ class DocumentIntelligenceService:
         Returns:
             dict with raw_text, fields, mandatory_filled, mandatory_total
         """
+        print(f"[DOC_INTEL] Starting analysis of PDF: {pdf_url[:80]}...{pdf_url[-40:]}")
+        
         # Start analysis
         poller = self.client.begin_analyze_document_from_url(
             "prebuilt-document",  # Use prebuilt model for general documents
             pdf_url
         )
         
+        print(f"[DOC_INTEL] Waiting for analysis to complete...")
         result = poller.result()
+        print(f"[DOC_INTEL] Analysis complete. Pages: {len(result.pages)}")
         
         # Extract full text
         raw_text = ""
@@ -97,59 +200,11 @@ class DocumentIntelligenceService:
             for line in page.lines:
                 raw_text += line.content + "\n"
         
-        # Extract mandatory fields using patterns
-        fields = ExtractionFields(
-            company_name=self._extract_field(
-                raw_text,
-                r"(?:Company Name|COMPANY NAME|Nama Syarikat):\s*(.+)"
-            ),
-            reg_no=self._extract_field(
-                raw_text,
-                r"(?:Registration No|REG NO|No Pendaftaran):\s*([\dA-Z-]+)"
-            ),
-            inc_date=self._extract_field(
-                raw_text,
-                r"(?:Incorporation Date|Date of Incorporation|Tarikh Penubuhan):\s*([\d/-]+)"
-            ),
-            address=self._extract_field(
-                raw_text,
-                r"(?:Registered Address|ADDRESS|Alamat Berdaftar):\s*(.+?)(?:\n|$)"
-            ),
-            nature_of_business=self._extract_field(
-                raw_text,
-                r"(?:Nature of Business|Business Activity|Jenis Perniagaan):\s*(.+)"
-            ),
-            paid_up_capital=self._extract_field(
-                raw_text,
-                r"(?:Paid[- ]Up Capital|PAID UP CAPITAL|Modal Berbayar):\s*(RM[\d,]+)"
-            ),
-            net_worth=self._extract_field(
-                raw_text,
-                r"(?:Net Worth|NET WORTH|Nilai Bersih):\s*(RM[\d,]+)"
-            ),
-            litigation=self._extract_field(
-                raw_text,
-                r"(?:Litigation|LITIGATION|Litigasi):\s*(\d+)"
-            ),
-            litigation_amount=self._extract_field(
-                raw_text,
-                r"(?:Litigation Amount|Total Litigation|Jumlah Litigasi):\s*(RM[\d,]+)"
-            ),
-            special_attention=self._extract_field(
-                raw_text,
-                r"(?:Special Attention|SA Account|Akaun SA):\s*(\d+)"
-            ),
-            bankruptcy=self._extract_field(
-                raw_text,
-                r"(?:Bankruptcy|BANKRUPTCY|Kebankrapan):\s*(\d+)"
-            ),
-            num_directors=self._extract_field(
-                raw_text,
-                r"(?:Number of Directors|Total Directors|Bilangan Pengarah):\s*(\d+)"
-            ),
-            directors=self._parse_directors(raw_text),
-            banking_facilities=self._parse_banking_facilities(raw_text)
-        )
+        print(f"[DOC_INTEL] Extracted {len(raw_text)} characters of text")
+        print(f"[DOC_INTEL] Using GPT-4 to extract fields intelligently...")
+        
+        # Use LLM to extract fields intelligently
+        fields = await self._extract_fields_with_llm(raw_text)
         
         # Count mandatory fields filled
         mandatory_fields = [

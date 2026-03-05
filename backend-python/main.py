@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 from models.schemas import (
     Application,
     ApplicationDetail,
+    ApplicationResponse,
     DashboardStats,
     DecisionInput,
     HealthResponse,
@@ -79,7 +80,7 @@ async def run_agent_background(
     customer_name: str
 ):
     """Run credit agent in background."""
-    print(f"🚀 [BACKGROUND] Starting agent for app {app_id}")
+    print(f"[BACKGROUND] Starting agent for app {app_id}")
     try:
         await run_credit_agent(
             app_id=app_id,
@@ -87,9 +88,9 @@ async def run_agent_background(
             requested_limit=requested_limit,
             customer_name=customer_name
         )
-        print(f"✅ [BACKGROUND] Agent completed for {app_id}")
+        print(f"[BACKGROUND] Agent completed for {app_id}")
     except Exception as e:
-        print(f"❌ [ERROR] Agent failed for {app_id}: {e}")
+        print(f"[ERROR] Agent failed for {app_id}: {e}")
         import traceback
         traceback.print_exc()
         await cosmos_service.update_application(
@@ -151,6 +152,7 @@ async def create_application(
         raise HTTPException(status_code=400, detail="PDF file too large (max 15MB)")
     
     # Upload to blob storage
+    print(f"[UPLOAD] Received file: {pdf.filename}")
     blob_result = await blob_service.upload_pdf(pdf_data, pdf.filename or "document.pdf")
     
     # Create application record
@@ -160,8 +162,10 @@ async def create_application(
         requested_limit=requested_limit,
         salesman=salesman,
         pdf_url=blob_result['url'],
-        pdf_blob_name=blob_result['blob_name']
+        pdf_blob_name=blob_result['blob_name'],
+        original_filename=pdf.filename or "CTOS_REPORT.pdf"
     )
+    print(f"[UPLOAD] Stored with filename: {application.original_filename}")
     
     # Audit log
     await cosmos_service.add_audit_log(
@@ -172,7 +176,7 @@ async def create_application(
     )
     
     # Start agent workflow in background
-    print(f"🤖 [MAIN] Scheduling agent workflow for application {application.id}")
+    print(f"[MAIN] Scheduling agent workflow for application {application.id}")
     background_tasks.add_task(
         run_agent_background,
         application.id,
@@ -180,7 +184,7 @@ async def create_application(
         requested_limit,
         customer_name
     )
-    print(f"✅ [MAIN] Agent task scheduled for {application.id}")
+    print(f"[MAIN] Agent task scheduled for {application.id}")
     
     return application
 
@@ -203,7 +207,7 @@ async def list_applications(
     return applications
 
 
-@app.get("/api/applications/{app_id}", response_model=ApplicationDetail)
+@app.get("/api/applications/{app_id}", response_model=ApplicationResponse)
 async def get_application(
     app_id: str,
     authorization: Optional[str] = Header(None)
@@ -222,8 +226,9 @@ async def get_application(
     decision = await cosmos_service.get_decision_by_app(app_id)
     audit_logs = await cosmos_service.get_audit_logs(app_id)
     
-    return ApplicationDetail(
-        **app.dict(),
+    # Return nested structure that frontend expects
+    return ApplicationResponse(
+        app=app,
         extraction=extraction,
         score=score,
         decision=decision,
@@ -314,7 +319,7 @@ async def get_dashboard_stats(
     )
 
 
-@app.get("/api/history", response_model=list[Application])
+@app.get("/api/history", response_model=list[ApplicationResponse])
 async def get_history(
     authorization: Optional[str] = Header(None)
 ):
@@ -326,7 +331,23 @@ async def get_history(
     # Filter completed applications
     completed = [app for app in applications if app.status in ["completed", "rejected"]]
     
-    return completed
+    # Build full response for each
+    result = []
+    for app in completed:
+        extraction = await cosmos_service.get_extraction(app.id)
+        score = await cosmos_service.get_score(app.id)
+        decision = await cosmos_service.get_decision(app.id)
+        audit_logs = await cosmos_service.get_audit_logs(app.id)
+        
+        result.append(ApplicationResponse(
+            app=app,
+            extraction=extraction,
+            score=score,
+            decision=decision,
+            audit_logs=audit_logs
+        ))
+    
+    return result
 
 
 @app.get("/api/agent-tasks")

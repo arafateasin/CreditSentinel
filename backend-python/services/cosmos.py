@@ -72,6 +72,7 @@ class CosmosDBService:
         salesman: str,
         pdf_url: str,
         pdf_blob_name: str,
+        original_filename: str = "CTOS_REPORT.pdf",
     ) -> Application:
         """Create a new application."""
         now = datetime.utcnow()
@@ -85,6 +86,7 @@ class CosmosDBService:
             "salesman": salesman,
             "pdf_url": pdf_url,
             "pdf_blob_name": pdf_blob_name,
+            "original_filename": original_filename,
             "status": "new",
             "agent_stage": "new",
             "created_at": now.isoformat(),

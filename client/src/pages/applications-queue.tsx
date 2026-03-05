@@ -52,6 +52,14 @@ export default function ApplicationsQueue() {
     refetchInterval: 10000,
   });
 
+  // Sort applications by creation time (newest first)
+  const sortedApps = [...apps].sort((a, b) => {
+    return (
+      new Date(b.createdAt || 0).getTime() -
+      new Date(a.createdAt || 0).getTime()
+    );
+  });
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -175,7 +183,7 @@ export default function ApplicationsQueue() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  apps.map((app) => (
+                  sortedApps.map((app) => (
                     <TableRow
                       key={app.id}
                       className="hover:bg-slate-50/80 transition-colors group"
