@@ -334,9 +334,9 @@ async def get_history(
     # Build full response for each
     result = []
     for app in completed:
-        extraction = await cosmos_service.get_extraction(app.id)
-        score = await cosmos_service.get_score(app.id)
-        decision = await cosmos_service.get_decision(app.id)
+        extraction = await cosmos_service.get_extraction_by_app(app.id)
+        score = await cosmos_service.get_score_by_app(app.id)
+        decision = await cosmos_service.get_decision_by_app(app.id)
         audit_logs = await cosmos_service.get_audit_logs(app.id)
         
         result.append(ApplicationResponse(

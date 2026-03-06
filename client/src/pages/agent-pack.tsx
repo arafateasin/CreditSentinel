@@ -386,10 +386,7 @@ export default function AgentPack() {
                         </tbody>
                       </table>
                     </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight italic">
-                        Matches Chin Hin eForm v1.2
-                      </p>
+                    <div className="flex justify-end items-center mt-2">
                       <p className="text-[10px] font-black text-primary uppercase tracking-widest">
                         Weight: 20%
                       </p>

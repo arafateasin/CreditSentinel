@@ -135,7 +135,7 @@ class Score(BaseModel):
 class DecisionInput(BaseModel):
     """Officer decision input."""
     approved: bool
-    final_limit: float
+    final_limit: float = 0.0
     notes: str = ""
 
 

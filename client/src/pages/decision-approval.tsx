@@ -95,11 +95,23 @@ export default function DecisionApproval() {
       });
       return;
     }
+
+    // Validate limit for approvals
+    const limitValue = parseFloat(effectiveLimit) || 0;
+    if (effectiveDecision === "approve" && limitValue <= 0) {
+      toast({
+        title: "Invalid Limit",
+        description: "Approved limit must be greater than 0.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await apiPost(`/api/applications/${id}/decide`, {
         approved: effectiveDecision === "approve",
-        final_limit: Number(effectiveLimit),
+        final_limit: limitValue,
         notes: remarks,
       });
       toast({

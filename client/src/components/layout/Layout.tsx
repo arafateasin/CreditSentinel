@@ -37,7 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { name: "New Application", href: "/applications/new", icon: PlusCircle },
     { name: "Decision History", href: "/history", icon: History },
     { name: "Reports", href: "/reports", icon: BarChart3 },
-    { name: "Settings", href: "/settings", icon: Settings, disabled: true },
+    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const SidebarContent = () => (
@@ -45,15 +45,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="p-8 flex items-center justify-between border-b border-slate-50">
         <Link href="/">
           <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20 ring-4 ring-primary/5">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center overflow-hidden">
+              <img
+                src="/assets/chinhin-logo.png"
+                alt="Chin Hin Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h1 className="font-black text-xl leading-none tracking-tight">
-                SENTINEL
+                CHIN HIN
               </h1>
               <p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-widest">
-                Autonomous Engine
+                Credit Sentinel
               </p>
             </div>
           </div>
@@ -71,9 +75,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="px-4 py-8 flex-1">
         <nav className="space-y-1">
           {navigation.map((item) => {
-            const isActive =
-              location === item.href ||
-              (item.href !== "/" && location.startsWith(item.href));
+            // Fix: Only highlight exact match or parent without more specific child active
+            const isExactMatch = location === item.href;
+            const isParentOfCurrent =
+              item.href !== "/" && location.startsWith(item.href + "/");
+
+            // Only mark as active if it's an exact match
+            const isActive = isExactMatch;
+
+            // For parent routes like /applications, show subtle indicator if child is active
+            const hasActiveChild = isParentOfCurrent;
+
             return (
               <Link
                 key={item.name}
@@ -85,6 +97,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     "flex items-center gap-4 px-5 py-3 rounded-2xl text-sm font-black transition-all cursor-pointer group",
                     isActive
                       ? "bg-slate-900 text-white shadow-xl shadow-slate-900/10"
+                      : hasActiveChild
+                      ? "bg-slate-100 text-slate-700"
                       : "text-slate-400 hover:bg-slate-50 hover:text-slate-900",
                   )}
                 >
@@ -93,6 +107,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       "w-5 h-5 transition-colors",
                       isActive
                         ? "text-white"
+                        : hasActiveChild
+                        ? "text-primary"
                         : "text-slate-300 group-hover:text-primary",
                     )}
                   />
@@ -145,9 +161,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Button>
             <div className="flex items-center gap-2">
               <img
-                src="https://chinhingroup.com/wp-content/uploads/2021/01/logo-chin-hin-group.png"
+                src="/assets/chinhin-logo.png"
                 alt="Chin Hin"
-                className="h-8 w-auto hidden sm:block"
+                className="h-10 w-auto hidden sm:block"
               />
               <div className="w-px h-6 bg-slate-200 mx-2 hidden sm:block" />
               <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
@@ -187,12 +203,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <DropdownMenuLabel className="font-black text-[10px] text-slate-400 uppercase tracking-widest mb-2 px-2">
                   Account Control
                 </DropdownMenuLabel>
-                <DropdownMenuItem className="rounded-2xl font-bold p-3 hover:bg-slate-50 cursor-pointer">
-                  Profile Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem className="rounded-2xl font-bold p-3 hover:bg-slate-50 cursor-pointer">
-                  Team Management
-                </DropdownMenuItem>
+                <Link href="/profile">
+                  <DropdownMenuItem className="rounded-2xl font-bold p-3 hover:bg-slate-50 cursor-pointer">
+                    Profile Settings
+                  </DropdownMenuItem>
+                </Link>
+                <Link href="/team">
+                  <DropdownMenuItem className="rounded-2xl font-bold p-3 hover:bg-slate-50 cursor-pointer">
+                    Team Management
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator className="my-2 bg-slate-100" />
                 <DropdownMenuItem className="text-rose-600 focus:text-rose-600 font-black rounded-2xl p-3 hover:bg-rose-50 cursor-pointer">
                   <LogOut className="w-4 h-4 mr-3" />
@@ -206,12 +226,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex-1 p-10 max-w-[1440px] mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
           {children}
         </main>
-        <footer className="border-t border-slate-100 bg-white/80 px-10 py-4 flex items-center justify-between">
+        <footer className="border-t border-slate-100 bg-white/80 px-10 py-4 flex items-center justify-center">
           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
             Powered by BlockNexa Labs
-          </p>
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-            Matches Chin Hin eForm v1.2
           </p>
         </footer>
       </div>

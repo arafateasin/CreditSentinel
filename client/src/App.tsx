@@ -15,6 +15,9 @@ import ReportsPage from "@/pages/reports";
 import ReviewExtraction from "@/pages/review-extraction";
 import ScoreRecommendation from "@/pages/score-recommendation";
 import AgentAssessment from "@/pages/agent-assessment";
+import ProfileSettings from "@/pages/profile";
+import TeamManagement from "@/pages/team";
+import Settings from "@/pages/settings";
 
 function Router() {
   return (
@@ -30,6 +33,9 @@ function Router() {
       <Route path="/agent-tasks" component={AgentTasks} />
       <Route path="/history" component={HistoryPage} />
       <Route path="/reports" component={ReportsPage} />
+      <Route path="/profile" component={ProfileSettings} />
+      <Route path="/team" component={TeamManagement} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -23,13 +23,18 @@ import {
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
+import { useLocation } from "wouter";
 
 export default function HistoryPage() {
   const [search, setSearch] = useState("");
+  const [overridesOnly, setOverridesOnly] = useState(false);
+  const [, setLocation] = useLocation();
 
-  const { data: historyRaw = [], isLoading, error } = useQuery<
-    Array<{ app: any; score: any; decision: any }>
-  >({
+  const {
+    data: historyRaw = [],
+    isLoading,
+    error,
+  } = useQuery<Array<{ app: any; score: any; decision: any }>>({
     queryKey: ["/api/history"],
     queryFn: () => apiGet("/api/history"),
     refetchInterval: 30000,
@@ -58,9 +63,9 @@ export default function HistoryPage() {
         : "—",
     }));
 
-  const filtered = historyData.filter((r) =>
-    r.customer.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = historyData
+    .filter((r) => r.customer.toLowerCase().includes(search.toLowerCase()))
+    .filter((r) => !overridesOnly || !r.match);
 
   return (
     <Layout>
@@ -119,11 +124,27 @@ export default function HistoryPage() {
                 placeholder="To date"
               />
               <div className="flex items-center gap-2 ml-auto">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                <span
+                  className={cn(
+                    "text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors",
+                    overridesOnly ? "text-rose-600" : "text-slate-400",
+                  )}
+                >
                   Overrides Only
                 </span>
-                <div className="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
-                  <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                <div
+                  className={cn(
+                    "w-10 h-5 rounded-full relative cursor-pointer transition-colors",
+                    overridesOnly ? "bg-rose-600" : "bg-slate-200",
+                  )}
+                  onClick={() => setOverridesOnly(!overridesOnly)}
+                >
+                  <div
+                    className={cn(
+                      "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform",
+                      overridesOnly ? "left-5" : "left-0.5",
+                    )}
+                  />
                 </div>
               </div>
             </div>
@@ -161,10 +182,7 @@ export default function HistoryPage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-12"
-                    >
+                    <TableCell colSpan={8} className="text-center py-12">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                         <p className="text-sm text-muted-foreground font-medium">
@@ -175,10 +193,7 @@ export default function HistoryPage() {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-12"
-                    >
+                    <TableCell colSpan={8} className="text-center py-12">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <AlertCircle className="h-10 w-10 text-rose-500" />
                         <div>
@@ -194,10 +209,7 @@ export default function HistoryPage() {
                   </TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-12"
-                    >
+                    <TableCell colSpan={8} className="text-center py-12">
                       <div className="flex flex-col items-center justify-center gap-3">
                         <div className="rounded-full bg-slate-100 p-3">
                           <Eye className="h-8 w-8 text-slate-400" />
@@ -207,7 +219,8 @@ export default function HistoryPage() {
                             No completed decisions yet
                           </p>
                           <p className="text-sm text-muted-foreground mb-4">
-                            Applications will appear here after you complete the full workflow:
+                            Applications will appear here after you complete the
+                            full workflow:
                           </p>
                           <div className="text-xs text-left text-slate-600 bg-slate-50 rounded-lg p-4 space-y-2">
                             <div className="flex items-start gap-2">
@@ -288,6 +301,10 @@ export default function HistoryPage() {
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 p-0"
+                          onClick={() =>
+                            setLocation(`/applications/${row.id}/decision`)
+                          }
+                          title="View decision details"
                         >
                           <Eye className="w-4 h-4 text-primary" />
                         </Button>

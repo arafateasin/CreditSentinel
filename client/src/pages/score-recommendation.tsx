@@ -30,6 +30,453 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
 import confetti from "canvas-confetti";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  pdf,
+} from "@react-pdf/renderer";
+
+// PDF Styles
+const pdfStyles = StyleSheet.create({
+  page: {
+    padding: 40,
+    fontSize: 10,
+    fontFamily: "Helvetica",
+    backgroundColor: "#ffffff",
+  },
+  header: {
+    backgroundColor: "#1e40af",
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 8,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#ffffff",
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 10,
+    color: "#e0e7ff",
+    letterSpacing: 1,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#1e293b",
+    marginBottom: 12,
+    marginTop: 16,
+    textTransform: "uppercase",
+  },
+  row: {
+    flexDirection: "row",
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: 10,
+    color: "#64748b",
+    width: "30%",
+  },
+  value: {
+    fontSize: 10,
+    color: "#0f172a",
+    fontWeight: "bold",
+    width: "70%",
+  },
+  scoreBox: {
+    backgroundColor: "#f1f5f9",
+    padding: 20,
+    borderRadius: 8,
+    marginVertical: 16,
+    alignItems: "center",
+  },
+  scoreValue: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#1e40af",
+  },
+  scoreLabel: {
+    fontSize: 12,
+    color: "#64748b",
+    marginTop: 4,
+  },
+  table: {
+    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    borderRadius: 4,
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+    padding: 8,
+  },
+  tableHeader: {
+    backgroundColor: "#f8fafc",
+    fontWeight: "bold",
+  },
+  tableCell: {
+    fontSize: 9,
+    flex: 1,
+  },
+  icon: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  strengthItem: {
+    flexDirection: "row",
+    marginBottom: 6,
+    paddingLeft: 12,
+  },
+  strengthText: {
+    fontSize: 10,
+    color: "#0f172a",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 30,
+    left: 40,
+    right: 40,
+    textAlign: "center",
+    fontSize: 8,
+    color: "#94a3b8",
+    borderTopWidth: 1,
+    borderTopColor: "#e2e8f0",
+    paddingTop: 10,
+  },
+  badge: {
+    backgroundColor: "#10b981",
+    color: "#ffffff",
+    padding: 6,
+    borderRadius: 4,
+    fontSize: 10,
+    fontWeight: "bold",
+    alignSelf: "flex-start",
+  },
+  badgeWarning: {
+    backgroundColor: "#f59e0b",
+  },
+  badgeDanger: {
+    backgroundColor: "#ef4444",
+  },
+  formula: {
+    backgroundColor: "#f8fafc",
+    padding: 12,
+    borderRadius: 4,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  formulaText: {
+    fontSize: 9,
+    color: "#475569",
+    marginBottom: 4,
+  },
+});
+
+// PDF Document Component
+function ScoreReportPDF({
+  data,
+}: {
+  data: {
+    customerName: string;
+    appId: string;
+    date: string;
+    totalScore: number;
+    riskLabel: string;
+    recommendation: string;
+    recommendedLimit: number;
+    chinHinScore: number;
+    netWorthScore: number;
+    gearingScore: number;
+    litigationScore: number;
+    conductScore: number;
+    netWorth: number;
+    gearing: number;
+    litigation: number;
+    rulesFired: any[];
+    overrideScore?: string;
+    overrideLimit?: string;
+    overrideRationale?: string;
+  };
+}) {
+  return (
+    <Document>
+      {/* PAGE 1 - EXECUTIVE SUMMARY */}
+      <Page size="A4" style={pdfStyles.page}>
+        {/* Header */}
+        <View style={pdfStyles.header}>
+          <Text style={pdfStyles.headerTitle}>
+            Chin Hin CreditSentinel V2.0
+          </Text>
+          <Text style={pdfStyles.headerSubtitle}>CREDIT ASSESSMENT REPORT</Text>
+        </View>
+
+        {/* Applicant Info */}
+        <View style={pdfStyles.row}>
+          <Text style={pdfStyles.label}>Applicant:</Text>
+          <Text style={pdfStyles.value}>{data.customerName}</Text>
+        </View>
+        <View style={pdfStyles.row}>
+          <Text style={pdfStyles.label}>App ID:</Text>
+          <Text style={pdfStyles.value}>#{data.appId}</Text>
+        </View>
+        <View style={pdfStyles.row}>
+          <Text style={pdfStyles.label}>Date:</Text>
+          <Text style={pdfStyles.value}>{data.date}</Text>
+        </View>
+
+        {/* Risk Score Display */}
+        <View style={pdfStyles.scoreBox}>
+          <Text style={pdfStyles.scoreValue}>{data.totalScore}</Text>
+          <Text style={pdfStyles.scoreLabel}>
+            {data.riskLabel.toUpperCase()} RISK
+          </Text>
+          <Text style={{ ...pdfStyles.scoreLabel, marginTop: 12 }}>
+            Agent Recommendation: {data.recommendation.toUpperCase()}
+          </Text>
+          <Text
+            style={{
+              ...pdfStyles.scoreLabel,
+              fontWeight: "bold",
+              fontSize: 14,
+            }}
+          >
+            RM {data.recommendedLimit.toLocaleString()}
+          </Text>
+        </View>
+
+        {/* Policy Compliance Table */}
+        <Text style={pdfStyles.sectionTitle}>Policy Compliance (8 Rules)</Text>
+        <View style={pdfStyles.table}>
+          {/* Table Header */}
+          <View style={[pdfStyles.tableRow, pdfStyles.tableHeader]}>
+            <Text style={[pdfStyles.tableCell, { flex: 2 }]}>Rule</Text>
+            <Text style={pdfStyles.tableCell}>Value</Text>
+            <Text style={pdfStyles.tableCell}>Score</Text>
+            <Text style={pdfStyles.tableCell}>Status</Text>
+          </View>
+          {/* Table Rows */}
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, { flex: 2 }]}>Net Worth</Text>
+            <Text style={pdfStyles.tableCell}>
+              RM {data.netWorth.toLocaleString()}
+            </Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.netWorthScore.toFixed(0)}/100
+            </Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.netWorthScore >= 50 ? "✓" : "⚠"}
+            </Text>
+          </View>
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, { flex: 2 }]}>Gearing</Text>
+            <Text style={pdfStyles.tableCell}>{data.gearing.toFixed(1)}x</Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.gearingScore.toFixed(0)}/100
+            </Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.gearingScore >= 50 ? "✓" : "⚠"}
+            </Text>
+          </View>
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, { flex: 2 }]}>Litigation</Text>
+            <Text style={pdfStyles.tableCell}>{data.litigation} cases</Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.litigationScore.toFixed(0)}/100
+            </Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.litigation === 0 ? "✓" : "⚠"}
+            </Text>
+          </View>
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, { flex: 2 }]}>
+              Banking Conduct
+            </Text>
+            <Text style={pdfStyles.tableCell}>Clean</Text>
+            <Text style={pdfStyles.tableCell}>
+              {data.conductScore.toFixed(0)}/100
+            </Text>
+            <Text style={pdfStyles.tableCell}>✓</Text>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <Text style={pdfStyles.footer}>
+          Chin Hin Group | creditsentinel.chin-hin.com | Page 1 of 2
+        </Text>
+      </Page>
+
+      {/* PAGE 2 - DETAILED RATIONALE */}
+      <Page size="A4" style={pdfStyles.page}>
+        {/* Header */}
+        <View style={pdfStyles.header}>
+          <Text style={pdfStyles.headerTitle}>Detailed Risk Analysis</Text>
+          <Text style={pdfStyles.headerSubtitle}>
+            CHIN HIN RISK FRAMEWORK V2.0
+          </Text>
+        </View>
+
+        {/* Risk Formula */}
+        <Text style={pdfStyles.sectionTitle}>Risk Score Formula</Text>
+        <View style={pdfStyles.formula}>
+          <Text style={pdfStyles.formulaText}>
+            Risk = 0.30 × NetWorth + 0.20 × Gearing + 0.20 × Litigation + 0.30 ×
+            Conduct
+          </Text>
+          <Text style={pdfStyles.formulaText}>
+            = 0.30 × {data.netWorthScore.toFixed(0)} + 0.20 ×{" "}
+            {data.gearingScore.toFixed(0)} + 0.20 ×{" "}
+            {data.litigationScore.toFixed(0)} + 0.30 × {data.conductScore}
+          </Text>
+          <Text
+            style={{
+              ...pdfStyles.formulaText,
+              fontWeight: "bold",
+              fontSize: 12,
+              marginTop: 6,
+            }}
+          >
+            = {data.chinHinScore} / 100
+          </Text>
+        </View>
+
+        {/* Strengths */}
+        <Text style={pdfStyles.sectionTitle}>Strengths</Text>
+        {data.totalScore >= 70 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ✓ Low risk score ({data.totalScore}/100)
+            </Text>
+          </View>
+        )}
+        {data.conductScore >= 80 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ✓ Clean banking conduct history
+            </Text>
+          </View>
+        )}
+        {data.litigation === 0 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ✓ No litigation or bankruptcy records
+            </Text>
+          </View>
+        )}
+        {data.netWorthScore >= 70 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ✓ Strong net worth position (RM {data.netWorth.toLocaleString()})
+            </Text>
+          </View>
+        )}
+
+        {/* Risks */}
+        <Text style={pdfStyles.sectionTitle}>Risk Considerations</Text>
+        {data.gearing > 2.1 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ⚠ Gearing ratio {data.gearing.toFixed(1)}x exceeds 2.1x benchmark
+            </Text>
+          </View>
+        )}
+        {data.netWorthScore < 50 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ⚠ Net worth below recommended threshold
+            </Text>
+          </View>
+        )}
+        {data.litigation > 0 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ⚠ {data.litigation} active litigation case(s) on record
+            </Text>
+          </View>
+        )}
+        {data.totalScore < 40 && (
+          <View style={pdfStyles.strengthItem}>
+            <Text style={pdfStyles.strengthText}>
+              ⚠ High risk profile - recommend additional due diligence
+            </Text>
+          </View>
+        )}
+
+        {/* Officer Override */}
+        {(data.overrideScore ||
+          data.overrideLimit ||
+          data.overrideRationale) && (
+          <>
+            <Text style={pdfStyles.sectionTitle}>Officer Override</Text>
+            {data.overrideScore && (
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Override Score:</Text>
+                <Text style={pdfStyles.value}>{data.overrideScore}/100</Text>
+              </View>
+            )}
+            {data.overrideLimit && (
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Override Limit:</Text>
+                <Text style={pdfStyles.value}>
+                  RM {parseFloat(data.overrideLimit).toLocaleString()}
+                </Text>
+              </View>
+            )}
+            {data.overrideRationale && (
+              <View style={pdfStyles.row}>
+                <Text style={pdfStyles.label}>Rationale:</Text>
+                <Text style={pdfStyles.value}>{data.overrideRationale}</Text>
+              </View>
+            )}
+          </>
+        )}
+
+        {/* Recommendation Summary */}
+        <Text style={pdfStyles.sectionTitle}>Final Recommendation</Text>
+        <View
+          style={{
+            ...pdfStyles.formula,
+            backgroundColor:
+              data.recommendation === "approve"
+                ? "#d1fae5"
+                : data.recommendation === "reject"
+                ? "#fee2e2"
+                : "#fef3c7",
+          }}
+        >
+          <Text
+            style={{
+              ...pdfStyles.formulaText,
+              fontWeight: "bold",
+              fontSize: 14,
+            }}
+          >
+            {data.recommendation.toUpperCase()}
+          </Text>
+          <Text style={{ ...pdfStyles.formulaText, marginTop: 6 }}>
+            Recommended Credit Limit: RM{" "}
+            {data.recommendedLimit.toLocaleString()}
+          </Text>
+          <Text style={pdfStyles.formulaText}>
+            Risk Category: {data.riskLabel.toUpperCase()}
+          </Text>
+        </View>
+
+        {/* Footer */}
+        <Text style={pdfStyles.footer}>
+          Generated by Credit Sentinel AI System | {data.date} | Page 2 of 2
+        </Text>
+      </Page>
+    </Document>
+  );
+}
 
 // Radial Progress Component
 function RadialProgress({
@@ -121,11 +568,13 @@ function RadialProgress({
 export default function ScoreRecommendation() {
   const [, setLocation] = useLocation();
   const { id } = useParams();
+  const { toast } = useToast();
   const [isEnglish, setIsEnglish] = useState(true);
   const [overrideScore, setOverrideScore] = useState("");
   const [overrideLimit, setOverrideLimit] = useState("");
   const [overrideRationale, setOverrideRationale] = useState("");
   const [showOverride, setShowOverride] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
 
   const { data: appData, isLoading } = useQuery<{ app: any; score: any }>({
     queryKey: ["/api/applications", id],
@@ -292,6 +741,69 @@ Powered by BlockNexa | Credit Sentinel
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = async () => {
+    setIsExportingPDF(true);
+    try {
+      toast({
+        title: "Generating PDF...",
+        description: "Creating your professional report",
+      });
+
+      const pdfData = {
+        customerName: app?.customerName || "Unknown Customer",
+        appId: id?.slice(0, 8) || "N/A",
+        date: new Date().toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+        totalScore,
+        riskLabel,
+        recommendation,
+        recommendedLimit,
+        chinHinScore,
+        netWorthScore,
+        gearingScore,
+        litigationScore,
+        conductScore,
+        netWorth,
+        gearing,
+        litigation,
+        rulesFired,
+        overrideScore,
+        overrideLimit,
+        overrideRationale,
+      };
+
+      const blob = await pdf(<ScoreReportPDF data={pdfData} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `CreditSentinel_Report_${app?.customerName?.replace(
+        /\s/g,
+        "_",
+      )}_${id?.slice(0, 8)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF Downloaded!",
+        description: "Professional report ready for presentation",
+      });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast({
+        title: "Export Failed",
+        description: "Could not generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
   const handleRecalculate = () => {
@@ -568,20 +1080,40 @@ Powered by BlockNexa | Credit Sentinel
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <Calculator className="w-5 h-5 text-blue-600" />
+                  <img
+                    src="/assets/chinhin-logo.png"
+                    alt="Chin Hin Logo"
+                    className="w-8 h-8 object-contain"
+                  />
                   {isEnglish
                     ? "Chin Hin Risk Framework V2.0"
                     : "Rangka Kerja Risiko Chin Hin V2.0"}
                 </CardTitle>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRecalculate}
-                  className="gap-2"
-                >
-                  <RefreshCw className="w-3 h-3" />
-                  {isEnglish ? "Recalculate" : "Kira Semula"}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExportPDF}
+                    disabled={isExportingPDF}
+                    className="gap-2 bg-blue-600 text-white hover:bg-blue-700 border-blue-600 disabled:opacity-50"
+                  >
+                    <FileText className="w-3 h-3" />
+                    {isExportingPDF
+                      ? "Generating..."
+                      : isEnglish
+                      ? "📄 Download Report"
+                      : "📄 Muat Turun Laporan"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRecalculate}
+                    className="gap-2"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    {isEnglish ? "Recalculate" : "Kira Semula"}
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
