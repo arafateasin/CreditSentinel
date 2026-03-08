@@ -1,7 +1,9 @@
 # Credit Sentinel — Quick Start Guide
+
 ## 📱 For Credit Officers
 
 ### 🔐 Login
+
 1. Go to: **https://credit-sentinel-five.vercel.app**
 2. Auto-login (demo mode) — no credentials needed
 
@@ -32,9 +34,11 @@
 ### ✅ Review & Approve
 
 **For Auto-Approved (>70% score):**
+
 - ✅ Review and confirm
 
 **For Medium Risk (40-70% score):**
+
 1. **Click "Decision & Approval"**
 2. **Review extracted data**
 3. **Check risk score breakdown**
@@ -44,6 +48,7 @@
 7. **Click "Confirm"**
 
 **For Auto-Rejected (<40% score):**
+
 - Review rationale and confirm rejection
 
 ---
@@ -51,7 +56,9 @@
 ### 🎯 Key Features
 
 #### Real-Time Progress
+
 Watch live AI agent execution:
+
 - 🔵 Uploading PDF
 - 🔵 Processing CTOS Document
 - 🔵 AI Extracting Fields
@@ -60,17 +67,23 @@ Watch live AI agent execution:
 - 🟢 Complete!
 
 #### Bilingual Rationale
+
 Every decision has:
+
 - 🇲🇾 Bahasa Malaysia explanation
 - 🇬🇧 English translation
 
 #### PII Protection
+
 Auto-masks:
+
 - IC Numbers: `123456-01-XXXX`
 - Phone: `+60-3-7XXX-XXXX`
 
 #### Audit Trail
+
 100% of actions logged:
+
 - Who did what
 - When it happened
 - Complete document history
@@ -95,11 +108,11 @@ Auto-masks:
 
 ### 📊 Decision Matrix
 
-| Risk Score | Action | Credit Limit |
-|-----------|---------|--------------|
-| **>70%** | Auto-Approve | Up to RM 250k |
-| **40-70%** | Officer Review | RM 50k-150k |
-| **<40%** | Auto-Reject | N/A |
+| Risk Score | Action         | Credit Limit  |
+| ---------- | -------------- | ------------- |
+| **>70%**   | Auto-Approve   | Up to RM 250k |
+| **40-70%** | Officer Review | RM 50k-150k   |
+| **<40%**   | Auto-Reject    | N/A           |
 
 ---
 

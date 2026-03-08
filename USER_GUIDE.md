@@ -1,4 +1,5 @@
 # 🛡️ Credit Sentinel — User Guide
+
 ## AI-Powered Credit Assessment Platform for Malaysian SMEs
 
 **Final MVP Submission** | March 8, 2026  
@@ -33,6 +34,7 @@
 ### Problem Statement
 
 Traditional credit assessment is:
+
 - ⏰ Time-consuming (manual data entry from CTOS reports)
 - 🐌 Slow (3-5 days per application)
 - ❌ Error-prone (human data entry mistakes)
@@ -41,6 +43,7 @@ Traditional credit assessment is:
 ### Our Solution
 
 Credit Sentinel automates the entire credit assessment workflow using:
+
 - **Azure Document Intelligence** for PDF extraction
 - **LangGraph Multi-Agent System** for autonomous decision-making
 - **GPT-4 (Azure OpenAI)** for intelligent field extraction and risk assessment
@@ -64,6 +67,7 @@ https://credit-sentinel-five.vercel.app
 **This is a demo/MVP version** — authentication is automatic. No login credentials required.
 
 > **Note:** In production deployment, the system would integrate with:
+>
 > - Corporate Active Directory (Azure AD)
 > - SSO (Single Sign-On)
 > - Role-Based Access Control (RBAC)
@@ -79,12 +83,14 @@ You will land directly on the **Dashboard** page.
 Upon accessing the application, you'll see the **Dashboard** with:
 
 1. **Statistics Cards** (Top row):
+
    - Total Applications
    - Pending Reviews
    - Auto-Approved
    - Auto-Rejected
 
 2. **Recent Applications Table**:
+
    - Application ID
    - Customer Name
    - Requested Limit
@@ -110,7 +116,9 @@ Upon accessing the application, you'll see the **Dashboard** with:
 ## ✨ Core Features
 
 ### 1. **Autonomous PDF Processing**
+
 Upload CTOS reports (PDF) and AI automatically extracts:
+
 - Company information (name, registration, address)
 - Financial data (paid-up capital, directors, shareholders)
 - Banking facilities (credit lines, loans)
@@ -118,7 +126,9 @@ Upload CTOS reports (PDF) and AI automatically extracts:
 - Director/shareholder details with IC masking
 
 ### 2. **8-Rule Malaysian Risk Scoring**
+
 Intelligent scoring based on:
+
 - CTOS score thresholds
 - Outstanding payment ratios
 - Director litigation history
@@ -129,12 +139,15 @@ Intelligent scoring based on:
 - Industry-specific factors
 
 **Scoring Output:**
+
 - ✅ **High (>70%)**: Auto-approve up to RM250,000
 - ⚠️ **Medium (40-70%)**: Requires officer review
 - ❌ **Low (<40%)**: Auto-reject with reason
 
 ### 3. **Real-Time Agent Streaming**
+
 Watch AI agent progress live with Server-Sent Events (SSE):
+
 1. **Uploading PDF** → Azure Blob Storage
 2. **Processing CTOS Document** → Document Intelligence OCR
 3. **AI Agent Extracting Fields** → GPT-4 intelligent extraction
@@ -142,20 +155,26 @@ Watch AI agent progress live with Server-Sent Events (SSE):
 5. **Generating Decision** → Bilingual rationale
 
 ### 4. **Bilingual Decision Rationale**
+
 Every decision includes:
+
 - **Bahasa Malaysia** rationale for local compliance
 - **English translation** for international stakeholders
 - Detailed breakdown of scoring rules triggered
 
 ### 5. **Complete Audit Trail**
+
 Every action logged to Azure Cosmos DB:
+
 - Who performed the action
 - What was changed
 - When it happened
 - Complete document versioning
 
 ### 6. **Human-in-the-Loop Review**
+
 For medium-risk applications (40-70% score):
+
 - Officers review extracted data
 - Verify scoring accuracy
 - Approve/reject with notes
@@ -168,10 +187,12 @@ For medium-risk applications (40-70% score):
 ### Part 1: Submitting a New Credit Application
 
 #### Step 1: Navigate to New Application
+
 1. Click **"New Application"** in the sidebar
 2. You'll see the application form
 
 #### Step 2: Fill Application Details
+
 Enter the following information:
 
 - **Customer Name**: Full company/individual name
@@ -180,12 +201,14 @@ Enter the following information:
 - **Notes** (optional): Any additional context
 
 #### Step 3: Upload CTOS PDF Report
+
 1. Click **"Choose File"** or drag-and-drop the PDF
 2. Supported format: CTOS Company/Individual Credit Report (PDF)
 3. File size limit: 10MB
 4. File will be previewed in the upload area
 
 #### Step 4: Start AI Agent Processing
+
 1. Click **"🤖 Start Agent Processing"** button
 2. System will show real-time agent progress:
 
@@ -201,7 +224,9 @@ Enter the following information:
 3. Wait 20-60 seconds for completion
 
 #### Step 5: Review Results
+
 Once complete, you'll be redirected to the **Agent Assessment** page showing:
+
 - Extracted fields
 - Risk score
 - Recommended decision
@@ -212,16 +237,20 @@ Once complete, you'll be redirected to the **Agent Assessment** page showing:
 ### Part 2: Monitoring Application Queue
 
 #### Step 1: Access Applications Queue
+
 1. Click **"Applications Queue"** in sidebar
 2. View all submitted applications
 
 #### Step 2: Filter & Search
+
 - **Filter by Status**: All / Pending / Approved / Rejected
 - **Search**: By customer name or application ID
 - **Sort**: By date, status, or score
 
 #### Step 3: View Application Details
+
 Click on any application to see:
+
 - Full extracted data
 - Risk score breakdown
 - Decision rationale (BM + EN)
@@ -233,13 +262,16 @@ Click on any application to see:
 ### Part 3: AI Agent Assessment Review
 
 #### Step 1: Navigate to Agent Assessment
+
 1. Click **"Agent Assessment"** in sidebar
 2. Select an application from the list
 
 #### Step 2: Review Extracted Fields
+
 Verify the following extracted information:
 
 **Company Information:**
+
 - Company Name
 - Registration Number
 - Business Address
@@ -247,25 +279,30 @@ Verify the following extracted information:
 - Company Score (CTOS)
 
 **Directors & Shareholders:**
+
 - Names (with IC masking)
 - Positions
 - Shareholding percentage
 - Litigation history
 
 **Banking Facilities:**
+
 - Facility types (Term Loan, Overdraft, Trade Line, etc.)
 - Credit limits
 - Outstanding amounts
 - Payment conduct
 
 **Financial Summary:**
+
 - Total Credit Facilities
 - Total Outstanding
 - Outstanding Ratio
 - Recent Applications
 
 #### Step 3: Agent Workflow Visualization
+
 See the LangGraph workflow execution:
+
 - Node execution status (✅ Completed / 🔄 Processing / ❌ Failed)
 - Field extraction confidence scores
 - Rule evaluation results
@@ -276,12 +313,14 @@ See the LangGraph workflow execution:
 ### Part 4: Risk Score & Recommendation
 
 #### Step 1: Access Score Recommendation
+
 1. Click **"Score & Recommendation"** in sidebar
 2. Select an application
 
 #### Step 2: Review Risk Score Breakdown
 
 **Overall Score Card:**
+
 ```
 Risk Score: 72%  [High Risk / Medium Risk / Low Risk]
 Confidence: 98%
@@ -289,25 +328,27 @@ Confidence: 98%
 
 **8-Rule Evaluation:**
 
-| Rule | Description | Weight | Score | Triggered |
-|------|-------------|--------|-------|-----------|
-| 1 | CTOS Score Threshold | 20% | 18% | ✅ |
-| 2 | Outstanding Payment Ratio | 15% | 12% | ✅ |
-| 3 | Director Litigation | 15% | 0% | ❌ |
-| 4 | Payment Conduct | 15% | 15% | ✅ |
-| 5 | Recent Facility Applications | 10% | 8% | ✅ |
-| 6 | Capital Adequacy | 10% | 10% | ✅ |
-| 7 | Banking Relationship | 10% | 6% | ✅ |
-| 8 | Industry Risk Factor | 5% | 3% | ✅ |
+| Rule | Description                  | Weight | Score | Triggered |
+| ---- | ---------------------------- | ------ | ----- | --------- |
+| 1    | CTOS Score Threshold         | 20%    | 18%   | ✅        |
+| 2    | Outstanding Payment Ratio    | 15%    | 12%   | ✅        |
+| 3    | Director Litigation          | 15%    | 0%    | ❌        |
+| 4    | Payment Conduct              | 15%    | 15%   | ✅        |
+| 5    | Recent Facility Applications | 10%    | 8%    | ✅        |
+| 6    | Capital Adequacy             | 10%    | 10%   | ✅        |
+| 7    | Banking Relationship         | 10%    | 6%    | ✅        |
+| 8    | Industry Risk Factor         | 5%     | 3%    | ✅        |
 
 #### Step 3: Review AI Recommendation
 
 **Recommended Decision:**
+
 - ✅ **APPROVE** — Credit Limit: RM 150,000
 - ⚠️ **REVIEW REQUIRED** — Refer to senior officer
 - ❌ **REJECT** — High risk indicators
 
 **Rationale (Bahasa Malaysia):**
+
 ```
 Permohonan ini DILULUSKAN dengan had kredit RM 150,000 berdasarkan:
 1. Skor CTOS yang baik (720 mata)
@@ -318,6 +359,7 @@ Permohonan ini DILULUSKAN dengan had kredit RM 150,000 berdasarkan:
 ```
 
 **Rationale (English):**
+
 ```
 This application is APPROVED with a credit limit of RM 150,000 based on:
 1. Good CTOS score (720 points)
@@ -332,18 +374,22 @@ This application is APPROVED with a credit limit of RM 150,000 based on:
 ### Part 5: Human Review & Final Approval
 
 #### Step 1: Access Decision & Approval Page
+
 1. Click **"Decision & Approval"** in sidebar
 2. Applications requiring review will appear here
 
 #### Step 2: Officer Review (For Medium-Risk Applications)
+
 For applications with 40-70% risk score:
 
 1. **Review Extracted Data**:
+
    - Verify accuracy of extracted fields
    - Check for missing information
    - Cross-reference with original PDF
 
 2. **Review Risk Assessment**:
+
    - Understand which rules were triggered
    - Check for edge cases
    - Consider additional context (notes from salesman)
@@ -354,11 +400,13 @@ For applications with 40-70% risk score:
    - 🔄 **Request More Info** — Send back for additional documentation
 
 #### Step 3: Add Officer Notes
+
 - **Approval Notes**: Reason for approval (if overriding AI)
 - **Rejection Reason**: Detailed explanation for rejection
 - **Conditions**: Any special conditions (e.g., require guarantor, lower limit)
 
 #### Step 4: Submit Final Decision
+
 1. Click **"Confirm Approval"** or **"Confirm Rejection"**
 2. Decision is immediately reflected in the system
 3. Notification sent to salesman
@@ -369,15 +417,19 @@ For applications with 40-70% risk score:
 ### Part 6: Review Extracted Data
 
 #### Step 1: Access Review Extraction
+
 1. Click **"Review Extraction"** in sidebar
 2. Select an application
 
 #### Step 2: Side-by-Side Comparison
+
 View:
+
 - **Left Panel**: Original CTOS PDF with highlighting
 - **Right Panel**: Extracted structured data
 
 #### Step 3: Verify Extracted Fields
+
 Check each extracted field with confidence score:
 
 ```
@@ -389,7 +441,9 @@ Check each extracted field with confidence score:
 Fields with confidence <90% are flagged for manual review.
 
 #### Step 4: Edit Incorrect Fields (Optional)
+
 If extraction errors found:
+
 1. Click **"Edit"** next to field
 2. Correct the value
 3. Click **"Save"**
@@ -401,11 +455,13 @@ If extraction errors found:
 ### Part 7: Reports & Analytics
 
 #### Step 1: Access Reports Dashboard
+
 1. Click **"Reports"** in sidebar
 
 #### Step 2: View Overview Statistics
 
 **Key Metrics:**
+
 - Total Applications This Month
 - Auto-Approval Rate
 - Average Processing Time
@@ -413,17 +469,20 @@ If extraction errors found:
 - Rejection Rate by Risk Category
 
 **Charts:**
+
 - Applications Trend (Line Chart)
 - Approval/Rejection Distribution (Pie Chart)
 - Risk Score Distribution (Histogram)
 - Processing Time by Application Type
 
 #### Step 3: Download Reports
+
 - **Excel Export**: All applications with full details
 - **PDF Summary**: Monthly performance report
 - **Audit Report**: Complete compliance log
 
 **Filters:**
+
 - Date Range (Today / This Week / This Month / Custom)
 - Status (All / Approved / Rejected / Pending)
 - Risk Category (High / Medium / Low)
@@ -434,11 +493,13 @@ If extraction errors found:
 ### Part 8: Audit Trail & History
 
 #### Step 1: Access History
+
 1. Click **"History"** in sidebar
 
 #### Step 2: View Complete Audit Log
 
 **For Each Application:**
+
 - **Submission**: Who submitted, when, what document
 - **Extraction**: AI agent execution timeline
 - **Scoring**: Risk rules triggered, scores calculated
@@ -447,6 +508,7 @@ If extraction errors found:
 - **Final Approval**: Approval/rejection confirmed
 
 **Timeline View:**
+
 ```
 2026-03-08 14:35:22 | Submitted by John Tan
 2026-03-08 14:35:45 | PDF uploaded to Blob Storage
@@ -458,6 +520,7 @@ If extraction errors found:
 ```
 
 #### Step 3: Download Audit Trail
+
 - Click **"Export Audit Log"**
 - Select date range
 - Download as CSV/PDF for compliance reporting
@@ -467,6 +530,7 @@ If extraction errors found:
 ## 🔧 Key Functionality
 
 ### 1. Real-Time Server-Sent Events (SSE)
+
 - Agent progress streamed live to UI
 - No page refresh needed
 - Visual indicators for each stage:
@@ -477,9 +541,11 @@ If extraction errors found:
   - 🔵 Deciding → 🟢 Complete
 
 ### 2. Intelligent Field Extraction
+
 Uses **GPT-4 + Azure Document Intelligence** to extract:
 
 **Mandatory Fields (14):**
+
 1. Company Name
 2. Registration Number
 3. Business Address
@@ -496,30 +562,38 @@ Uses **GPT-4 + Azure Document Intelligence** to extract:
 14. Litigation History
 
 **Table Extraction:**
+
 - Directors & Shareholders table
 - Banking Facilities table
 - Payment History table
 
 ### 3. PII Masking
+
 Automatic redaction of sensitive data:
+
 - IC Numbers: `123456-01-XXXX`
 - Phone Numbers: `+60-3-7XXX-XXXX`
 - Account Numbers: Partial masking
 
 ### 4. Bilingual Compliance
+
 Every decision includes:
+
 - **Bahasa Malaysia** (primary language for contracts)
 - **English** (for international stakeholders)
 - Consistent terminology across both languages
 
 ### 5. Error Handling & Retries
+
 If processing fails:
+
 - Automatic retry (up to 3 attempts)
 - Clear error messages
 - Option to retry manually
 - Support contact information
 
 **Common Errors:**
+
 - PDF format not supported → Use CTOS official PDF
 - File too large → Compress to <10MB
 - Extraction confidence low → Manual review required
@@ -530,6 +604,7 @@ If processing fails:
 ## 🏗️ Technical Architecture
 
 ### Frontend Stack
+
 - **React 19.2** with TypeScript
 - **Vite** for fast development
 - **TanStack Query** for data fetching
@@ -538,23 +613,27 @@ If processing fails:
 - **Recharts** for analytics visualization
 
 ### Backend Stack
+
 - **Python 3.11** with FastAPI
 - **Gunicorn + Uvicorn** for production serving
 - **LangGraph** for AI agent orchestration
 - **LangChain + OpenAI** for LLM integration
 
 ### Azure Cloud Services
+
 - **Cosmos DB**: NoSQL database for applications & audit logs
 - **Blob Storage**: Secure PDF storage with SAS tokens
 - **Document Intelligence**: OCR and layout analysis
 - **Azure OpenAI (GPT-4o)**: Intelligent field extraction
 
 ### Deployment
+
 - **Frontend**: Vercel (CDN, auto-scaling)
 - **Backend**: Railway (container-based, auto-deploy)
 - **CI/CD**: GitHub Actions (automated testing & deployment)
 
 ### Security Features
+
 - **Bearer Token Authentication** (demo mode)
 - **HTTPS Everywhere** (TLS 1.3)
 - **CORS Protection** (backend configured for frontend domain only)
@@ -568,9 +647,11 @@ If processing fails:
 ### Common Issues
 
 #### Issue 1: PDF Upload Fails
+
 **Symptoms:** Upload button grayed out, error message "Invalid file type"
 
 **Solutions:**
+
 1. Ensure file is PDF format (not image/scanned)
 2. Check file size <10MB
 3. Verify PDF is a real CTOS report (not custom format)
@@ -579,9 +660,11 @@ If processing fails:
 ---
 
 #### Issue 2: Agent Processing Hangs
+
 **Symptoms:** Progress bar stuck at "Processing CTOS Document" or "AI agent extracting"
 
 **Solutions:**
+
 1. Wait 60 seconds (complex PDFs take longer)
 2. Check network connection (requires stable internet)
 3. Refresh page and check Applications Queue (may have completed)
@@ -591,9 +674,11 @@ If processing fails:
 ---
 
 #### Issue 3: Extracted Data Inaccurate
+
 **Symptoms:** Fields extracted with wrong values or low confidence
 
 **Solutions:**
+
 1. Check PDF quality (scanned PDFs have lower accuracy)
 2. Use **Review Extraction** page to manually correct fields
 3. System will re-calculate risk score after corrections
@@ -602,9 +687,11 @@ If processing fails:
 ---
 
 #### Issue 4: Risk Score Seems Wrong
+
 **Symptoms:** Score doesn't match expectations based on CTOS report
 
 **Solutions:**
+
 1. Review **Score & Recommendation** page for rule breakdown
 2. Check which rules were triggered vs not triggered
 3. Verify extracted fields accuracy (incorrect data → incorrect score)
@@ -614,9 +701,11 @@ If processing fails:
 ---
 
 #### Issue 5: Decision Rationale Not Showing
+
 **Symptoms:** Bilingual rationale section is empty or showing error
 
 **Solutions:**
+
 1. Check that Azure OpenAI service is active
 2. Wait 10-15 seconds (GPT-4 generates rationale after scoring)
 3. Refresh page (rationale may have loaded)
@@ -628,9 +717,11 @@ If processing fails:
 ### Technical Support
 
 **For MVP Submission Period:**
+
 - Support not yet available (demo/prototype phase)
 
 **For Production Deployment:**
+
 - Email: support@creditsentinel.com
 - Phone: +60-3-XXXX-XXXX (Business hours: Mon-Fri 9AM-6PM)
 - Web Portal: https://support.creditsentinel.com
@@ -668,20 +759,21 @@ If processing fails:
 
 ## 📊 Performance Benchmarks
 
-| Metric | Traditional Process | Credit Sentinel |
-|--------|---------------------|-----------------|
-| Processing Time | 3-5 days | <30 seconds |
-| Data Entry Errors | 5-10% | <1% |
-| Manual Steps | 15-20 | 2-3 |
-| Audit Trail | Paper logs | 100% digital |
-| Compliance Cost | High | Minimal |
-| Officer Time/App | 2-4 hours | 5-10 minutes |
+| Metric            | Traditional Process | Credit Sentinel |
+| ----------------- | ------------------- | --------------- |
+| Processing Time   | 3-5 days            | <30 seconds     |
+| Data Entry Errors | 5-10%               | <1%             |
+| Manual Steps      | 15-20               | 2-3             |
+| Audit Trail       | Paper logs          | 100% digital    |
+| Compliance Cost   | High                | Minimal         |
+| Officer Time/App  | 2-4 hours           | 5-10 minutes    |
 
 ---
 
 ## 🎯 Success Criteria
 
 **Credit Sentinel achieves:**
+
 - ✅ **95%+** extraction accuracy on standard CTOS PDFs
 - ✅ **<30 seconds** processing time per application
 - ✅ **100%** audit trail compliance
@@ -696,6 +788,7 @@ If processing fails:
 ## 📞 Contact Information
 
 **Project Team:**
+
 - **Developer**: Easin Arafat (arafateasin)
 - **Repository**: https://github.com/arafateasin/CreditSentinel
 - **Live Demo**: https://credit-sentinel-five.vercel.app
@@ -709,6 +802,7 @@ If processing fails:
 ## 📝 Appendix
 
 ### A. CTOS Score Interpretation
+
 - **800-900**: Excellent (Very Low Risk)
 - **700-799**: Good (Low Risk)
 - **600-699**: Fair (Medium Risk)
@@ -716,11 +810,13 @@ If processing fails:
 - **<500**: Very Poor (Very High Risk)
 
 ### B. Credit Limit Guidelines
+
 - **Score >70%**: Up to RM 250,000
 - **Score 40-70%**: Officer discretion (RM 50k-150k typical)
 - **Score <40%**: Rejection recommended
 
 ### C. Rule Weight Distribution
+
 1. CTOS Score: 20%
 2. Outstanding Ratio: 15%
 3. Director Litigation: 15%

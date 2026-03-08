@@ -1,4 +1,5 @@
 # 🛡️ Credit Sentinel — Beginner's Guide
+
 ## Easy Step-by-Step Instructions (No Experience Needed!)
 
 **Website:** https://credit-sentinel-five.vercel.app  
@@ -11,6 +12,7 @@
 **Credit Sentinel** is like having a **super-smart robot assistant** that helps you decide if a company should get a loan.
 
 ### Before (The Old Way) 😫
+
 - Someone gives you a thick PDF report
 - You read it page by page
 - You type everything into the computer (takes 2-3 hours!)
@@ -18,7 +20,8 @@
 - You wait for manager approval (takes 2-3 days!)
 - **TOTAL TIME: 3-5 days!** ⏰
 
-### Now (The New Way) 🎉  
+### Now (The New Way) 🎉
+
 - You upload the PDF file (10 seconds!)
 - Robot reads everything for you (30 seconds!)
 - Robot calculates everything (5 seconds!)
@@ -60,6 +63,7 @@ The website opens automatically and you can start using it right away!
 When you first open the website, you'll see:
 
 ### Top Part (Statistics)
+
 Four boxes showing numbers:
 
 ```
@@ -70,14 +74,18 @@ Four boxes showing numbers:
 These boxes show how many loan applications you've processed.
 
 ### Middle Part (List of Applications)
+
 A table (like Excel) showing:
+
 - Customer names
 - How much money they want
 - Status (Approved/Rejected/Waiting)
 - Date
 
 ### Left Side (Menu)
+
 A list of options:
+
 - 🏠 Dashboard — Main screen (you are here!)
 - ➕ New Application — Start a new loan application
 - 📋 Queue — See all applications waiting
@@ -90,6 +98,7 @@ A list of options:
 ## 📤 How to Check a New Loan Application
 
 ### What You Need:
+
 - A PDF file of the CTOS report (the document about the company)
 - Customer's name
 - How much money they want to borrow
@@ -105,27 +114,35 @@ Look at the left side menu and click **"➕ New Application"**
 You'll see a form with empty boxes. Fill them in:
 
 **Box 1 — Customer Name:**
+
 ```
 Type: ABC Company Sdn Bhd
 ```
+
 (Or whoever the customer is)
 
-**Box 2 — Requested Credit Limit:**  
+**Box 2 — Requested Credit Limit:**
+
 ```
 Type: 150000
 ```
+
 (This means RM 150,000. Just type the numbers, no "RM" or commas)
 
 **Box 3 — Salesman:**
+
 ```
 Type: John Tan
 ```
+
 (Whoever is handling this customer)
 
 **Box 4 — Notes (Optional):**
+
 ```
 Type: Returning customer, urgent request
 ```
+
 (You can skip this if you want)
 
 #### STEP 3: Upload the PDF File
@@ -133,12 +150,14 @@ Type: Returning customer, urgent request
 Now you need to upload the CTOS report (PDF file):
 
 **Option A — Drag and Drop:**
+
 1. Find the PDF file on your computer
 2. Click and HOLD the file
 3. Drag it to the upload box
 4. Let go!
 
 **Option B — Browse:**
+
 1. Click the **"Choose File"** button
 2. A window opens showing your computer files
 3. Find the PDF file
@@ -150,6 +169,7 @@ You should see the file name appear in the upload box! ✅
 #### STEP 4: Start the Magic! 🪄
 
 Click the big button that says:
+
 ```
 🤖 Start Agent Processing
 ```
@@ -199,6 +219,7 @@ Capital: RM 500,000 ✅ (99% sure)
 ```
 
 The ✅ and percentage means how confident the robot is.
+
 - ✅ 99% = Very confident, probably correct!
 - ⚠️ 85% = Not very confident, maybe check this manually
 
@@ -211,6 +232,7 @@ Risk Score: 75% 🟢 LOW RISK
 ```
 
 **What does this mean?**
+
 - **Above 70% = GREEN = Low Risk** → Safe to approve! ✅
 - **40-70% = YELLOW = Medium Risk** → Need to check carefully ⚠️
 - **Below 40% = RED = High Risk** → Better to reject! ❌
@@ -220,6 +242,7 @@ Risk Score: 75% 🟢 LOW RISK
 The robot tells you what to do:
 
 **If LOW RISK (GREEN):**
+
 ```
 ✅ RECOMMENDED: APPROVE
 Suggested limit: RM 150,000
@@ -227,6 +250,7 @@ Reason: Good payment history, no problems
 ```
 
 **If MEDIUM RISK (YELLOW):**
+
 ```
 ⚠️ RECOMMENDED: REVIEW CAREFULLY
 Suggested limit: RM 50,000 (lower than requested)
@@ -234,6 +258,7 @@ Reason: Some late payments, need to check more
 ```
 
 **If HIGH RISK (RED):**
+
 ```
 ❌ RECOMMENDED: REJECT
 Reason: Too many problems, high risk
@@ -244,6 +269,7 @@ Reason: Too many problems, high risk
 You'll see the same explanation written twice:
 
 **Malay Version:**
+
 ```
 Permohonan ini DILULUSKAN dengan had RM 150,000 kerana:
 - Skor CTOS yang baik
@@ -252,6 +278,7 @@ Permohonan ini DILULUSKAN dengan had RM 150,000 kerana:
 ```
 
 **English Version:**
+
 ```
 This application is APPROVED with limit RM 150,000 because:
 - Good CTOS score
@@ -305,6 +332,7 @@ Want to see all the applications you've submitted?
 
 1. Click **"Applications Queue"** in the left menu
 2. You'll see a list of ALL applications with their status:
+
    - ✅ **Approved** — Customer got the loan
    - ❌ **Rejected** — Customer didn't get the loan
    - ⏳ **Pending** — Waiting for your decision
@@ -319,11 +347,13 @@ Want to see all the applications you've submitted?
 ### Problem 1: "Can't Upload PDF"
 
 **Why it happens:**
+
 - File is too big (more than 10MB)
 - File is not a PDF (maybe it's a Word document or image?)
 - Internet connection is slow
 
 **How to fix:**
+
 1. Make sure the file ends with ".pdf"
 2. Check file size (right-click → Properties → Size)
 3. If too big, try to compress it first
@@ -334,11 +364,13 @@ Want to see all the applications you've submitted?
 ### Problem 2: "Robot is Taking Too Long"
 
 **Why it happens:**
+
 - PDF is very long (many pages)
 - Internet is slow
 - Too many people using at the same time
 
 **How to fix:**
+
 1. Wait 1-2 minutes (don't click anything!)
 2. If nothing happens after 2 minutes, refresh the page (press F5)
 3. Go to "Applications Queue" to check if it finished
@@ -349,11 +381,13 @@ Want to see all the applications you've submitted?
 ### Problem 3: "Wrong Information Found"
 
 **Why it happens:**
+
 - PDF was scanned (photo) instead of digital text
 - PDF quality is bad
 - Information in PDF is unclear
 
 **How to fix:**
+
 1. Look at the confidence percentage
 2. If below 90%, it might be wrong
 3. Click the **"Edit"** button next to the wrong information
@@ -366,11 +400,13 @@ Want to see all the applications you've submitted?
 ### Problem 4: "I Don't Agree with the Robot"
 
 **Why it happens:**
+
 - You have information the robot doesn't know
 - Special circumstances
 - Customer is a VIP or returning customer
 
 **How to fix:**
+
 1. You are the boss! You can override the robot's decision
 2. Go to **"Decision & Approval"**
 3. Make your own decision
@@ -383,18 +419,23 @@ Want to see all the applications you've submitted?
 ## 🎯 Quick Tips for Beginners
 
 ### Tip 1: Always Read Both Languages
+
 The Bahasa Malaysia and English explanations say the same thing, but sometimes one is easier to understand than the other!
 
 ### Tip 2: Trust the Robot (Mostly!)
+
 The robot is very accurate. If it says "Low Risk" and "Approve", it's usually safe to follow!
 
 ### Tip 3: Check Yellow Applications Carefully
+
 When the robot says "Medium Risk", it means it's not sure. Look at everything carefully before deciding!
 
 ### Tip 4: Add Notes
+
 Always type notes when you approve or reject. It helps you remember WHY you made this decision later!
 
 ### Tip 5: Don't Rush
+
 Even though this is fast (30 seconds!), always read the results. Better to take 2 minutes and be sure than to rush and make a mistake!
 
 ---
@@ -416,6 +457,7 @@ Think of it like a school grade:
 This is how much money the customer can borrow.
 
 Example:
+
 - Customer asks for: **RM 200,000**
 - Robot recommends: **RM 150,000**
 - Why lower? Because there's some risk, so give less money to be safe!
@@ -425,6 +467,7 @@ You can change this number if you want! Just type a different number.
 ### What is "CTOS Score"?
 
 CTOS is like a report card for companies:
+
 - **800-900** = A+ (Excellent!)
 - **700-799** = B (Good)
 - **600-699** = C (OK)
@@ -449,21 +492,27 @@ You can use Credit Sentinel on your phone too!
 ## 💡 FAQ (Frequently Asked Questions)
 
 ### Q: Do I need special training to use this?
+
 **A:** No! If you can use Facebook or WhatsApp, you can use this. Just follow the steps in this guide!
 
 ### Q: Can I trust the robot's decision?
+
 **A:** The robot is very accurate (95%+), but YOU make the final decision. The robot helps you, but you're the boss!
 
 ### Q: What if I make a mistake?
+
 **A:** Don't worry! Everything is saved. You can always go back, check the history, and make corrections. Nothing is deleted!
 
 ### Q: Can I use this without internet?
+
 **A:** No, you need internet because the robot works in the cloud (online). But you don't need super-fast internet, normal speed is fine!
 
 ### Q: How long does it keep my data?
+
 **A:** Forever! Everything is saved automatically. You can search old applications anytime in the "History" menu.
 
 ### Q: What if the PDF is in English but I want Malay explanation?
+
 **A:** No problem! The robot gives BOTH Malay and English explanations automatically, no matter what language the PDF is in!
 
 ---
@@ -492,11 +541,13 @@ Want to practice? Here's a simple exercise:
 ## 📞 Need More Help?
 
 **For this demo/submission:**
+
 - Check the README file in GitHub
 - Look at the Quick Start guide
 - Watch the screenshot examples
 
 **Remember:** This is a DEMO version for the hackathon submission. In the real version, there would be:
+
 - Training videos
 - Phone support
 - Email help
