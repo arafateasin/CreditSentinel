@@ -241,6 +241,40 @@ async def get_application(
     )
 
 
+@app.post("/api/applications/{app_id}/retry")
+async def retry_agent(
+    app_id: str,
+    background_tasks: BackgroundTasks,
+    authorization: Optional[str] = Header(None)
+):
+    """Retry agent workflow if it was interrupted (e.g., on free-tier server shutdown)."""
+    verify_token(authorization)
+    
+    # Get application
+    app = await cosmos_service.get_application(app_id)
+    if not app:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Only retry if in extracted/error state
+    if app.status not in ["extracted", "error", "scoring"]:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot retry application in '{app.status}' status. Only 'extracted', 'scoring', or 'error' allowed."
+        )
+    
+    # Schedule agent workflow in background
+    print(f"[RETRY] Scheduling agent retry for application {app_id}")
+    background_tasks.add_task(
+        run_agent_background,
+        app_id,
+        app.pdfUrl,
+        app.requestedLimit,
+        app.customerName
+    )
+    
+    return {"message": "Agent workflow restarted", "app_id": app_id, "status": app.status}
+
+
 @app.post("/api/applications/{app_id}/decide")
 async def make_decision(
     app_id: str,
