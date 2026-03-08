@@ -44,6 +44,19 @@ async def extract_node(state: Dict[str, Any]) -> Dict[str, Any]:
     print(f"[EXTRACT] Starting extraction for app {state['app_id']}")
     
     try:
+        # Check if extraction already exists (for retry scenarios)
+        existing_extraction = await cosmos_service.get_extraction_by_app(state['app_id'])
+        
+        if existing_extraction:
+            print(f"[EXTRACT] Found existing extraction, reusing data")
+            return {
+                **state,
+                "fields": existing_extraction.fields,
+                "raw_text": existing_extraction.rawText,
+                "mandatory_filled": existing_extraction.mandatoryFilled,
+                "mandatory_total": existing_extraction.mandatoryTotal,
+            }
+        
         # Update status
         await cosmos_service.update_application(
             state['app_id'],
