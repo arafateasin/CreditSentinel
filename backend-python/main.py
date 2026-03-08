@@ -267,9 +267,9 @@ async def retry_agent(
     background_tasks.add_task(
         run_agent_background,
         app_id,
-        app.pdfUrl,
-        app.requestedLimit,
-        app.customerName
+        app.pdf_url,
+        app.requested_limit,
+        app.customer_name
     )
     
     return {"message": "Agent workflow restarted", "app_id": app_id, "status": app.status}
