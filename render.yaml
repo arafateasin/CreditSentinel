@@ -1,0 +1,31 @@
+# Render Deployment Configuration for Credit Sentinel Backend
+
+services:
+  - type: web
+    name: credit-sentinel-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: COSMOS_ENDPOINT
+        sync: false
+      - key: COSMOS_KEY
+        sync: false
+      - key: COSMOS_DATABASE
+        value: CreditSentinelDB
+      - key: STORAGE_ACCOUNT_NAME
+        sync: false
+      - key: STORAGE_ACCOUNT_KEY
+        sync: false
+      - key: DOC_INTEL_ENDPOINT
+        sync: false
+      - key: DOC_INTEL_KEY
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_KEY
+        sync: false
+      - key: AZURE_OPENAI_DEPLOYMENT
+        value: gpt-4o
