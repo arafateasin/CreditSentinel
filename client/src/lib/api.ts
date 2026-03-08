@@ -1,8 +1,11 @@
 // Shared API client for Credit Sentinel
 // All API calls go through these functions so endpoints are centralised.
 
-// Backend URL - uses environment variable or falls back to local development
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Backend URL - in production (Vercel), frontend and backend are on same domain
+// In development, backend runs on port 8000
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:8000");
 
 // Helper to construct full API URL
 function getApiUrl(path: string): string {

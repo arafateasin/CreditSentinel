@@ -1,0 +1,30 @@
+# FastAPI & Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# LangChain & LangGraph
+langchain==0.1.16
+langchain-openai==0.1.1
+langgraph==0.0.28
+openai==1.14.0
+
+# Azure SDKs
+azure-storage-blob==12.19.0
+azure-ai-formrecognizer==3.3.2
+azure-cosmos==4.5.1
+azure-identity==1.15.0
+
+# Data & Validation
+pydantic==2.6.1
+pydantic-settings==2.1.0
+
+# Utilities
+python-dotenv==1.0.1
+aiofiles==23.2.1
+
+# Date & Time
+python-dateutil==2.8.2
+
+# Testing
+httpx==0.26.0
