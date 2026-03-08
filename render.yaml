@@ -5,8 +5,14 @@ services:
     name: credit-sentinel-api
     runtime: python
     rootDir: backend-python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      python --version
+      pip install --upgrade pip
+      pip install -r requirements.txt
     startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
+    runtimeSource:
+      type: static
+      value: 3.11.9
     envVars:
       - key: COSMOS_ENDPOINT
         sync: false
