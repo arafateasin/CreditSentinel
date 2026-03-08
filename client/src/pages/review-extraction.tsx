@@ -17,21 +17,25 @@ import {
   ZoomIn,
   ZoomOut,
   Target,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost } from "@/lib/api";
 import PDFViewer from "@/components/PDFViewer";
 import { addMockBoundingBoxes } from "@/lib/bboxUtils";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ReviewExtraction() {
   const [, setLocation] = useLocation();
   const { id } = useParams();
   const [editingField, setEditingField] = useState<string | null>(null);
   const [selectedField, setSelectedField] = useState<string | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: appData, isLoading } = useQuery<{ app: any; extraction: any }>({
     queryKey: ["/api/applications", id],
@@ -45,6 +49,24 @@ export default function ReviewExtraction() {
         status === "completed"
         ? false
         : 3000;
+    },
+  });
+
+  const retryMutation = useMutation({
+    mutationFn: () => apiPost(`/api/applications/${id}/retry`, {}),
+    onSuccess: () => {
+      toast({
+        title: "Agent Restarted",
+        description: "The scoring workflow has been resumed. Please wait...",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/applications", id] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Retry Failed",
+        description: error.message || "Could not restart agent workflow",
+        variant: "destructive",
+      });
     },
   });
 
@@ -244,6 +266,21 @@ export default function ReviewExtraction() {
                   </span>
                 </div>
               </div>
+              {appData?.app?.status === "extracted" && (
+                <Button
+                  variant="outline"
+                  onClick={() => retryMutation.mutate()}
+                  disabled={retryMutation.isPending}
+                >
+                  <RefreshCw
+                    className={cn(
+                      "h-4 w-4 mr-2",
+                      retryMutation.isPending && "animate-spin",
+                    )}
+                  />
+                  Retry Scoring
+                </Button>
+              )}
               <Button
                 onClick={() => setLocation(`/applications/${id}/score`)}
                 disabled={
