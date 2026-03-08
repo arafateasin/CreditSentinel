@@ -381,43 +381,43 @@ npx shadcn@latest add badge
 
 ## 🚀 Deployment
 
-### Frontend (Azure Static Web Apps)
+**For complete deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)**
 
-1. Build frontend:
+### Quick Overview
 
-   ```bash
-   npm run build
-   ```
+**Architecture:**
 
-2. Deploy `client/dist/` to `dashboard-creditsentinel2026`:
-   ```bash
-   az staticwebapp upload \
-     --name dashboard-creditsentinel2026 \
-     --resource-group credit-sentinel-rg \
-     --source client/dist/
-   ```
+- **Frontend**: Vercel (React/Vite static site)
+- **Backend**: Azure App Service (Python FastAPI)
 
-### Backend (Azure App Service)
+**Quick Deploy:**
 
-1. Create deployment package:
+1. **Backend to Azure:**
 
    ```bash
-   npm run build
+   cd backend-python
+   az webapp up --name credit-sentinel-backend --resource-group credit-sentinel-rg --runtime "PYTHON:3.11"
    ```
 
-2. Deploy to `api-creditsentinel2026`:
+2. **Frontend to Vercel:**
 
    ```bash
-   az webapp up \
-     --name api-creditsentinel2026 \
-     --resource-group credit-sentinel-rg \
-     --runtime "NODE:20-lts" \
-     --sku B1
+   vercel --prod
    ```
 
-3. Set environment variables in Azure Portal:
-   - Go to Configuration → Application Settings
-   - Add all `.env` variables
+   Set `VITE_API_URL` environment variable in Vercel Dashboard to your backend URL.
+
+3. **Verify:**
+   - Backend health: `https://your-backend.azurewebsites.net/health`
+   - Frontend: `https://your-project.vercel.app`
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed step-by-step instructions including:
+
+- Azure resource setup
+- Environment variable configuration
+- GitHub Actions CI/CD
+- Troubleshooting guide
+- Cost estimates
 
 ---
 
