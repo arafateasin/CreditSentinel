@@ -4,11 +4,10 @@ services:
   - type: web
     name: credit-sentinel-api
     runtime: python
+    rootDir: backend-python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: COSMOS_ENDPOINT
         sync: false
       - key: COSMOS_KEY
